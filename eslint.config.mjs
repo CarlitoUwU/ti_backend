@@ -2,6 +2,7 @@
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
+import { EndOfLineState } from 'typescript';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -30,5 +31,16 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn'
     },
+    "pretier/prettier": [
+      'error',
+      {
+        singleQuote: true,
+        semi: false,
+        trailingComma: 'all',
+        printWidth: 100,
+        tabWidth: 2,
+        EndOfLine: "auto"
+      },
+    ],
   },
 );
