@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum month_enum {
+  January
+  February
+  March
+  April
+  May
+  June
+  July
+  August
+  September
+  October
+  November
+  December
+}
+
+model daily_consumptions {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id               String    @db.Uuid
+  device_id             String    @db.Uuid
+  date                  DateTime  @db.Date
+  hours_use             Float
+  estimated_consumption Float
+  is_active             Boolean   @default(true)
+  devices               devices   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                 users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model devices {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String               @db.VarChar
+  consumption_kwh_h  Int
+  is_active          Boolean              @default(true)
+  daily_consumptions daily_consumptions[]
+}
+
+model districts {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar
+  fee_kwh   Float
+  is_active Boolean  @default(true)
+  users     users[]
+}
+
+model goals {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String   @db.Uuid
+  month          month_enum
+  year           Int
+  goal_kwh       Float
+  estimated_cost Float
+  is_active      Boolean  @default(true)
+  users          users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model medals {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar
+  description  String         @db.VarChar
+  url_img      String         @db.VarChar
+  is_active    Boolean        @default(true)
+  users_medals users_medals[]
+}
+
+model monthly_consumptions {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String   @db.Uuid
+  month       month_enum
+  year        Int
+  kwh_total   Float
+  kwh_cost    Float
+  amount_paid Float
+  is_active   Boolean  @default(true)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model notifications {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String   @db.Uuid
+  name        String   @db.VarChar
+  description String   @db.VarChar
+  created_at  DateTime @default(now()) @db.Date
+  is_active   Boolean  @default(true)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model savings {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String   @db.Uuid
+  month       month_enum
+  year        Int
+  savings_kwh Float
+  savings_sol Float
+  is_active   Boolean  @default(true)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_profiles {
+  user_id    String   @id @db.Uuid
+  first_name String   @db.VarChar
+  last_name  String   @db.VarChar
+  tastes     String[]
+  is_active  Boolean  @default(true)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id                   String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                String                 @unique @db.VarChar
+  username             String                 @unique @db.VarChar
+  password             String                 @db.VarChar
+  district_id          Int
+  is_active            Boolean                @default(true)
+  created_at           DateTime               @default(now()) @db.Date
+  updated_at           DateTime               @db.Date
+  last_login           DateTime               @db.Date
+  daily_consumptions   daily_consumptions[]
+  goals                goals[]
+  monthly_consumptions monthly_consumptions[]
+  notifications        notifications[]
+  savings              savings[]
+  user_profiles        user_profiles?
+  districts            districts?             @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_medals         users_medals[]
+  users_videos         users_videos[]
+}
+
+model users_medals {
+  user_id          String   @db.Uuid
+  melda_id         Int
+  achievement_date DateTime @db.Date
+  is_active        Boolean  @default(true)
+  medals           medals   @relation(fields: [melda_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users            users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, melda_id])
+}
+
+model users_videos {
+  user_id   String   @db.Uuid
+  video_id  Int
+  date_seen DateTime @db.Date
+  is_active Boolean  @default(true)
+  users     users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  videos    videos   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, video_id])
+}
+
+model videos {
+  id           Int            @id @default(autoincrement())
+  title        String         @db.VarChar
+  url          String         @db.VarChar
+  duration_seg Int
+  is_active    Boolean        @default(true)
+  users_videos users_videos[]
+}
