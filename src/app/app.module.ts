@@ -5,9 +5,10 @@ import { UsersModule } from '../modules/users/users.module';
 import { DistrictsModule } from '../modules/districts/districts.module';
 import { DevicesModule } from '../modules/devices/devices.module';
 import { VideosModule } from '../modules/videos/videos.module';
+import { MedalsModule } from '../modules/medals/medals.module';
 
 @Module({
-  imports: [UsersModule, DistrictsModule, DevicesModule, VideosModule],
+  imports: [UsersModule, DistrictsModule, DevicesModule, VideosModule, MedalsModule],
   controllers: [AppController],
   providers: [AppService],
 })
