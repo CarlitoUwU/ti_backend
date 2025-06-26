@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserProfilesService } from '../user_profiles/user_profiles.service';
 import { UserBaseDto } from './dto';
+import * as bcrypt from 'bcrypt';
+import { parse } from 'path';
 
 @Injectable()
 export class UsersService {
@@ -13,11 +15,22 @@ export class UsersService {
   ) { }
 
   async create(createUserDto: CreateUserDto) {
+    const existingUser = await this.prismaService.users.findUnique({
+      where: { email: createUserDto.email },
+    });
+
+    if (existingUser) {
+      throw new ConflictException(`Email '${createUserDto.email}' is already in use`);
+    }
+
+    const salt = parseInt(process.env.BCRYPT_SALT || '10', 10);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
     const user = await this.prismaService.users.create({
       data: {
         email: createUserDto.email,
         username: createUserDto.username,
-        password: createUserDto.password,
+        password: hashedPassword,
         district_id: createUserDto.district_id,
         is_active: createUserDto.is_active,
         created_at: new Date(),
@@ -132,7 +145,35 @@ export class UsersService {
       where: { id },
       include: {
         user_profiles: true,
+        districts: true,
       },
+    });
+
+    return this.toUserDto(user);
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.prismaService.users.findUnique({
+      where: { email },
+      include: {
+        user_profiles: true,
+        districts: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email '${email}' not found`);
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new NotFoundException('Invalid password');
+    }
+
+    // Update last login time
+    await this.prismaService.users.update({
+      where: { id: user.id },
+      data: { last_login: new Date() },
     });
 
     return this.toUserDto(user);

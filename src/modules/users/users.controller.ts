@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ParseUUIDPipe, HttpCode } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DesactivateUserDto, ActivateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserBaseDto } from './dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('users')
 export class UsersController {
@@ -84,5 +85,15 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post('/login')
+  @ApiOperation({ summary: 'User login', description: 'Authenticates a user with email and password' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: 200, description: 'User authenticated', type: UserBaseDto })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @HttpCode(200) 
+  login(@Body() user: LoginDto) {
+    return this.usersService.login(user.email, user.password);
   }
 }
