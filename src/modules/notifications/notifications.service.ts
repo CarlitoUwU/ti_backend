@@ -31,6 +31,7 @@ export class NotificationsService {
         name: true,
         description: true,
         created_at: true,
+        was_read: true,
       }
     });
 
@@ -40,6 +41,7 @@ export class NotificationsService {
       name: data.name,
       description: data.description,
       created_at: data.created_at,
+      was_read: data.was_read,
       is_active: true,
     }
 
@@ -54,6 +56,7 @@ export class NotificationsService {
         name: true,
         description: true,
         created_at: true,
+        was_read: true,
         is_active: true,
       }
     });
@@ -64,6 +67,7 @@ export class NotificationsService {
       name: notification.name,
       description: notification.description,
       created_at: notification.created_at,
+      was_read: notification.was_read,
       is_active: notification.is_active,
     }));
 
@@ -79,6 +83,7 @@ export class NotificationsService {
         name: true,
         description: true,
         created_at: true,
+        was_read: true,
         is_active: true,
       }
     });
@@ -93,6 +98,7 @@ export class NotificationsService {
       name: data.name,
       description: data.description,
       created_at: data.created_at,
+      was_read: data.was_read,
       is_active: data.is_active,
     });
   }
@@ -115,6 +121,7 @@ export class NotificationsService {
         name: true,
         description: true,
         created_at: true,
+        was_read: true,
         is_active: true,
       },
       orderBy: {
@@ -128,6 +135,7 @@ export class NotificationsService {
       name: notification.name,
       description: notification.description,
       created_at: notification.created_at,
+      was_read: notification.was_read,
       is_active: notification.is_active,
     }));
 
@@ -149,6 +157,7 @@ export class NotificationsService {
         name: true,
         description: true,
         created_at: true,
+        was_read: true,
         is_active: true,
       }
     });
@@ -159,6 +168,7 @@ export class NotificationsService {
       name: data.name,
       description: data.description,
       created_at: data.created_at,
+      was_read: data.was_read,
       is_active: data.is_active,
     });
   }
@@ -178,6 +188,7 @@ export class NotificationsService {
         name: true,
         description: true,
         created_at: true,
+        was_read: true,
         is_active: true,
       }
     });
@@ -188,6 +199,7 @@ export class NotificationsService {
       name: data.name,
       description: data.description,
       created_at: data.created_at,
+      was_read: data.was_read,
       is_active: data.is_active,
     });
   }
@@ -206,6 +218,7 @@ export class NotificationsService {
         name: true,
         description: true,
         created_at: true,
+        was_read: true,
         is_active: true,
       }
     });
@@ -216,6 +229,69 @@ export class NotificationsService {
       name: data.name,
       description: data.description,
       created_at: data.created_at,
+      was_read: data.was_read,
+      is_active: data.is_active,
+    });
+  }
+
+  async markAsRead(id: string) {
+    const existingNotification = await this.prisma.notifications.findUnique({ where: { id } });
+    if (!existingNotification) {
+      throw new NotFoundException(`Notification with ID ${id} not found`);
+    }
+
+    const data = await this.prisma.notifications.update({
+      where: { id },
+      data: { was_read: true },
+      select: {
+        id: true,
+        user_id: true,
+        name: true,
+        description: true,
+        created_at: true,
+        was_read: true,
+        is_active: true,
+      }
+    });
+
+    return plainToInstance(NotificationBaseDto, {
+      id: data.id,
+      user_id: data.user_id,
+      name: data.name,
+      description: data.description,
+      created_at: data.created_at,
+      was_read: data.was_read,
+      is_active: data.is_active,
+    });
+  }
+
+  async markAsUnread(id: string) {
+    const existingNotification = await this.prisma.notifications.findUnique({ where: { id } });
+    if (!existingNotification) {
+      throw new NotFoundException(`Notification with ID ${id} not found`);
+    }
+
+    const data = await this.prisma.notifications.update({
+      where: { id },
+      data: { was_read: false },
+      select: {
+        id: true,
+        user_id: true,
+        name: true,
+        description: true,
+        created_at: true,
+        was_read: true,
+        is_active: true,
+      }
+    });
+
+    return plainToInstance(NotificationBaseDto, {
+      id: data.id,
+      user_id: data.user_id,
+      name: data.name,
+      description: data.description,
+      created_at: data.created_at,
+      was_read: data.was_read,
       is_active: data.is_active,
     });
   }

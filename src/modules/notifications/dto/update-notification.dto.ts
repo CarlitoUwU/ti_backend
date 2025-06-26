@@ -23,3 +23,23 @@ export class DesactivateNotificationDto extends (NotificationBaseDto) {
   })
   is_active: boolean = false;
 }
+
+export class MarkAsReadNotificationDto extends (NotificationBaseDto) {
+  @IsBoolean()
+  @ApiProperty({
+    description: 'Whether the notification has been read',
+    example: true,
+    default: true,
+  })
+  was_read: boolean = true;
+}
+
+export class MarkAsUnreadNotificationDto extends (NotificationBaseDto) {
+  @IsBoolean()
+  @ApiProperty({
+    description: 'Whether the notification has been read',
+    example: false,
+    default: false,
+  })
+  was_read: boolean = false;
+}

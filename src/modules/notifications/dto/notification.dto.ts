@@ -47,6 +47,14 @@ export class NotificationDto {
 
   @IsBoolean()
   @ApiProperty({
+    description: 'Whether the notification has been read by the user',
+    example: false,
+    default: false,
+  })
+  was_read!: boolean;
+
+  @IsBoolean()
+  @ApiProperty({
     description: 'Whether the notification is active',
     example: true,
     default: true,

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { ActivateNotificationDto, DesactivateNotificationDto } from './dto/update-notification.dto';
+import { ActivateNotificationDto, DesactivateNotificationDto, MarkAsReadNotificationDto, MarkAsUnreadNotificationDto } from './dto/update-notification.dto';
 import { ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { NotificationBaseDto } from './dto';
 
@@ -90,6 +90,32 @@ export class NotificationsController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   desactivate(@Param('id', ParseUUIDPipe) id: string) {
     return this.notificationsService.desactivate(id);
+  }
+
+  @Patch(':id/mark-as-read')
+  @ApiOperation({ summary: 'Mark a notification as read' })
+  @ApiResponse({
+    status: 200,
+    description: 'The notification has been successfully marked as read.',
+    type: MarkAsReadNotificationDto,
+  })
+  @ApiResponse({ status: 404, description: 'Notification not found' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  markAsRead(@Param('id', ParseUUIDPipe) id: string) {
+    return this.notificationsService.markAsRead(id);
+  }
+
+  @Patch(':id/mark-as-unread')
+  @ApiOperation({ summary: 'Mark a notification as unread' })
+  @ApiResponse({
+    status: 200,
+    description: 'The notification has been successfully marked as unread.',
+    type: MarkAsUnreadNotificationDto,
+  })
+  @ApiResponse({ status: 404, description: 'Notification not found' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  markAsUnread(@Param('id', ParseUUIDPipe) id: string) {
+    return this.notificationsService.markAsUnread(id);
   }
 
   @Delete(':id')
