@@ -3,11 +3,19 @@ import { CreateUserVideoDto } from './dto/create-user-video.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserVideoBaseDto } from './dto';
 import { plainToInstance } from 'class-transformer';
+import { UsersMedalsService } from '../users-medals/users-medals.service';
 
 @Injectable()
 export class UsersVideosService {
 
-  constructor(private prisma: PrismaService) { }
+  private id_medal_bronce: number = 1;
+  private id_medal_plata: number = 2;
+  private id_medal_oro: number = 3;
+
+  constructor(
+    private prisma: PrismaService,
+    private usersMedalsService: UsersMedalsService
+  ) { }
 
   async create(createUserVideoDto: CreateUserVideoDto): Promise<UserVideoBaseDto> {
     // Verificar que el usuario existe
@@ -36,34 +44,20 @@ export class UsersVideosService {
           video_id: createUserVideoDto.video_id
         }
       },
+      select: {
+        user_id: true,
+        video_id: true,
+        date_seen: true,
+        is_active: true,
+      }
     });
 
     if (existingRelation) {
-      // Si ya existe, actualizar la fecha
-      const data = await this.prisma.users_videos.update({
-        where: {
-          user_id_video_id: {
-            user_id: createUserVideoDto.user_id,
-            video_id: createUserVideoDto.video_id
-          }
-        },
-        data: {
-          date_seen: new Date(),
-          is_active: true
-        },
-        select: {
-          user_id: true,
-          video_id: true,
-          date_seen: true,
-          is_active: true,
-        }
-      });
-
       return plainToInstance(UserVideoBaseDto, {
-        user_id: data.user_id,
-        video_id: data.video_id,
-        date_seen: data.date_seen,
-        is_active: data.is_active,
+        user_id: existingRelation.user_id,
+        video_id: existingRelation.video_id,
+        date_seen: existingRelation.date_seen,
+        is_active: existingRelation.is_active,
       });
     }
 
@@ -81,6 +75,25 @@ export class UsersVideosService {
         is_active: true,
       }
     });
+
+    // Asignar medallas si corresponde
+    const count = await this.countByUserId(createUserVideoDto.user_id);
+    if (count === 1) {
+      await this.usersMedalsService.create({
+        user_id: createUserVideoDto.user_id,
+        melda_id: this.id_medal_bronce
+      });
+    } else if (count === 10) {
+      await this.usersMedalsService.create({
+        user_id: createUserVideoDto.user_id,
+        melda_id: this.id_medal_plata
+      });
+    } else if (count === 25) {
+      await this.usersMedalsService.create({
+        user_id: createUserVideoDto.user_id,
+        melda_id: this.id_medal_oro
+      });
+    }
 
     return plainToInstance(UserVideoBaseDto, {
       user_id: data.user_id,
@@ -318,5 +331,22 @@ export class UsersVideosService {
       date_seen: data.date_seen,
       is_active: data.is_active,
     });
+  }
+
+  async countByUserId(user_id: string): Promise<number> {
+    // Verificar que el usuario existe
+    const userExists = await this.prisma.users.findUnique({
+      where: { id: user_id }
+    });
+
+    if (!userExists) {
+      throw new NotFoundException(`User with ID ${user_id} not found`);
+    }
+
+    const count = await this.prisma.users_videos.count({
+      where: { user_id, is_active: true }
+    });
+
+    return count;
   }
 }

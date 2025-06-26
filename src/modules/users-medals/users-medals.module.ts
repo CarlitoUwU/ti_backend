@@ -4,6 +4,7 @@ import { UsersMedalsController } from './users-medals.controller';
 import { PrismaService } from 'src/prisma.service';
 
 @Module({
+  exports: [UsersMedalsService],
   controllers: [UsersMedalsController],
   providers: [UsersMedalsService, PrismaService],
 })

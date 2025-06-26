@@ -35,35 +35,23 @@ export class UsersMedalsService {
           user_id: createUserMedalDto.user_id,
           melda_id: createUserMedalDto.melda_id
         }
+      },
+      select: {
+        user_id: true,
+        melda_id: true,
+        achievement_date: true,
+        is_active: true,
       }
     });
 
     if (existingRelation) {
-      // Si ya existe, actualizar la fecha de logro
-      const data = await this.prisma.users_medals.update({
-        where: {
-          user_id_melda_id: {
-            user_id: createUserMedalDto.user_id,
-            melda_id: createUserMedalDto.melda_id
-          }
-        },
-        data: {
-          achievement_date: new Date(),
-          is_active: true
-        },
-        select: {
-          user_id: true,
-          melda_id: true,
-          achievement_date: true,
-          is_active: true,
-        }
-      });
+      // Si ya existe, retornar la relación existente
 
       return plainToInstance(UserMedalBaseDto, {
-        user_id: data.user_id,
-        melda_id: data.melda_id,
-        achievement_date: data.achievement_date,
-        is_active: data.is_active,
+        user_id: existingRelation.user_id,
+        melda_id: existingRelation.melda_id,
+        achievement_date: existingRelation.achievement_date,
+        is_active: existingRelation.is_active,
       });
     }
 
