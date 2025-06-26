@@ -38,7 +38,7 @@ model daily_consumptions {
 model devices {
   id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name               String               @db.VarChar
-  consumption_kwh_h  Int
+  consumption_kwh_h  Float
   is_active          Boolean              @default(true)
   daily_consumptions daily_consumptions[]
 }

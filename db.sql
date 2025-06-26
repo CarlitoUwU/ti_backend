@@ -63,7 +63,7 @@ CREATE TABLE savings (
 CREATE TABLE devices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR NOT NULL,
-    consumption_kwh_h INT,
+    consumption_kwh_h DOUBLE PRECISION,
     is_active BOOLEAN DEFAULT TRUE
 );
 
