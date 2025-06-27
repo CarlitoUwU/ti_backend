@@ -10,9 +10,10 @@ import { NotificationsModule } from '../modules/notifications/notifications.modu
 import { UsersVideosModule } from '../modules/users-videos/users-videos.module';
 import { UsersMedalsModule } from '../modules/users-medals/users-medals.module';
 import { GoalsModule } from '../modules/goals/goals.module';
+import { DailyConsumptionsModule } from '../modules/daily-consumptions/daily-consumptions.module';
 
 @Module({
-  imports: [UsersModule, DistrictsModule, DevicesModule, VideosModule, MedalsModule, NotificationsModule, UsersVideosModule, UsersMedalsModule, GoalsModule],
+  imports: [UsersModule, DistrictsModule, DevicesModule, VideosModule, MedalsModule, NotificationsModule, UsersVideosModule, UsersMedalsModule, GoalsModule, DailyConsumptionsModule],
   controllers: [AppController],
   providers: [AppService],
 })
