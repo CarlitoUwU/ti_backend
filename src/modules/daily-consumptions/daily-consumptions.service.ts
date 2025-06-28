@@ -40,6 +40,21 @@ export class DailyConsumptionsService {
       );
     }
 
+    const existingUserRecord = await this.prisma.daily_consumptions.findFirst({
+      where: {
+        user_id: createDailyConsumptionDto.user_id,
+        date: new Date(createDailyConsumptionDto.date),
+      },
+    });
+
+    if (!existingUserRecord) {
+      // Update user's streak if this is the first record for the user on this date
+      await this.prisma.user_profiles.update({
+        where: { user_id: createDailyConsumptionDto.user_id },
+        data: { streak: { increment: 1 } },
+      });
+    }
+
     const estimated_consumption = createDailyConsumptionDto.hours_use * device.consumption_kwh_h;
 
     const dailyConsumption = await this.prisma.daily_consumptions.create({
