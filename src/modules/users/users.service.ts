@@ -190,6 +190,7 @@ export class UsersService {
         first_name: data.user_profiles.first_name,
         last_name: data.user_profiles.last_name,
         tastes: data.user_profiles.tastes,
+        streak: data.user_profiles.streak,
       },
       district: {
         id: data.districts.id,
