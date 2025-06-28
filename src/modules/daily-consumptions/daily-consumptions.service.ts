@@ -48,7 +48,24 @@ export class DailyConsumptionsService {
       );
     }
 
-    // Si es el primer registro del usuario en ese día, puedes actualizar streak aquí si lo deseas
+    // Si es el primer registro del usuario en ese día, puedes actualizar streak
+    const userDailyConsumptions = await this.prisma.daily_consumptions.count({
+      where: {
+        user_id: createDailyConsumptionDto.user_id,
+        date: dateOnly,
+      },
+    });
+
+    if (userDailyConsumptions === 0) {
+      await this.prisma.user_profiles.update({
+        where: { user_id: createDailyConsumptionDto.user_id },
+        data: {
+          streak: {
+            increment: 1,
+          },
+        },
+      });
+    }
 
     const estimated_consumption = createDailyConsumptionDto.hours_use * device.consumption_kwh_h;
 
@@ -238,52 +255,24 @@ export class DailyConsumptionsService {
       throw new NotFoundException(`Daily consumption with ID ${id} not found`);
     }
 
-    if (updateDailyConsumptionDto.date) {
-      const conflictingRecord = await this.prisma.daily_consumptions.findFirst({
-        where: {
-          user_id: existingRecord.user_id,
-          device_id: existingRecord.device_id,
-          date: new Date(updateDailyConsumptionDto.date),
-          id: { not: id },
-        },
-      });
+    const estimated_consumption = updateDailyConsumptionDto.hours_use * existingRecord.devices.consumption_kwh_h;
 
-      if (conflictingRecord) {
-        throw new ConflictException(
-          `A daily consumption record already exists for this user, device, and date ${updateDailyConsumptionDto.date}`
-        );
-      }
-    }
-
-    let estimated_consumption = existingRecord.estimated_consumption;
-
-    // Recalculate estimated_consumption if hours_use is being updated
-    if (updateDailyConsumptionDto.hours_use !== undefined) {
-      estimated_consumption = updateDailyConsumptionDto.hours_use * existingRecord.devices.consumption_kwh_h;
-    }
-
-    const updateData: any = {
-      ...updateDailyConsumptionDto,
-      estimated_consumption,
-    };
-
-    if (updateDailyConsumptionDto.date) {
-      updateData.date = new Date(updateDailyConsumptionDto.date);
-    }
-
-    const dailyConsumption = await this.prisma.daily_consumptions.update({
+    const data = await this.prisma.daily_consumptions.update({
       where: { id },
-      data: updateData,
+      data: {
+        estimated_consumption,
+        hours_use: updateDailyConsumptionDto.hours_use,
+      }
     });
 
     return plainToInstance(DailyConsumptionDto, {
-      id: dailyConsumption.id,
-      user_id: dailyConsumption.user_id,
-      device_id: dailyConsumption.device_id,
-      date: dailyConsumption.date.toISOString().split('T')[0],
-      hours_use: dailyConsumption.hours_use,
-      estimated_consumption: dailyConsumption.estimated_consumption,
-      is_active: dailyConsumption.is_active,
+      id: data.id,
+      user_id: data.user_id,
+      device_id: data.device_id,
+      date: data.date.toISOString().split('T')[0],
+      hours_use: data.hours_use,
+      estimated_consumption: data.estimated_consumption,
+      is_active: data.is_active,
     });
   }
 
