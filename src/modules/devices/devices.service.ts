@@ -3,6 +3,7 @@ import { CreateDeviceDto } from './dto/create-device.dto';
 import { PrismaService } from 'src/prisma.service';
 import { DeviceBaseDto } from './dto';
 import { plainToInstance } from 'class-transformer';
+import { url } from 'inspector';
 
 @Injectable()
 export class DevicesService {
@@ -14,11 +15,13 @@ export class DevicesService {
       data: {
         name: createDeviceDto.name,
         consumption_kwh_h: createDeviceDto.consumption_kwh_h,
+        url: createDeviceDto.url,
       },
       select: {
         id: true,
         name: true,
         consumption_kwh_h: true,
+        url: true,
       }
     });
 
@@ -26,6 +29,7 @@ export class DevicesService {
       id: data.id,
       name: data.name,
       consumption_kwh_h: data.consumption_kwh_h,
+      url: data.url,
       is_active: true,
     }
 
@@ -38,6 +42,7 @@ export class DevicesService {
         id: true,
         name: true,
         consumption_kwh_h: true,
+        url: true,
         is_active: true,
       }
     });
@@ -46,6 +51,7 @@ export class DevicesService {
       id: device.id,
       name: device.name,
       consumption_kwh_h: device.consumption_kwh_h,
+      url: device.url,
       is_active: device.is_active,
     }));
 
@@ -59,6 +65,7 @@ export class DevicesService {
         id: true,
         name: true,
         consumption_kwh_h: true,
+        url: true,
         is_active: true,
       }
     });
@@ -71,6 +78,7 @@ export class DevicesService {
       id: data.id,
       name: data.name,
       consumption_kwh_h: data.consumption_kwh_h,
+      url: data.url,
       is_active: data.is_active,
     });
   }
@@ -88,6 +96,7 @@ export class DevicesService {
         id: true,
         name: true,
         consumption_kwh_h: true,
+        url: true,
         is_active: true,
       }
     });
@@ -100,6 +109,7 @@ export class DevicesService {
       id: data.id,
       name: data.name,
       consumption_kwh_h: data.consumption_kwh_h,
+      url: data.url,
       is_active: data.is_active,
     });
   }
@@ -117,6 +127,7 @@ export class DevicesService {
         id: true,
         name: true,
         consumption_kwh_h: true,
+        url: true,
         is_active: true,
       }
     });
@@ -125,6 +136,7 @@ export class DevicesService {
       id: data.id,
       name: data.name,
       consumption_kwh_h: data.consumption_kwh_h,
+      url: data.url,
       is_active: data.is_active,
     });
   }
@@ -141,6 +153,7 @@ export class DevicesService {
         id: true,
         name: true,
         consumption_kwh_h: true,
+        url: true,
         is_active: true,
       }
     });
@@ -149,6 +162,7 @@ export class DevicesService {
       id: data.id,
       name: data.name,
       consumption_kwh_h: data.consumption_kwh_h,
+      url: data.url,
       is_active: data.is_active,
     });
   }

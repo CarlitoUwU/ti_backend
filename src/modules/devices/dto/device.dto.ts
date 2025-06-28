@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  IsUrl,
   IsUUID,
 } from 'class-validator';
 
@@ -29,6 +30,13 @@ export class DeviceDto {
     example: 0.15,
   })
   consumption_kwh_h!: number;
+
+  @IsUrl()
+  @ApiProperty({
+    description: 'URL of the device',
+    example: 'https://www.example.com/device/123',
+  })
+  url!: string;
 
   @IsBoolean()
   @ApiProperty({

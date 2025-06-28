@@ -17,6 +17,14 @@ export class CreateDeviceDto {
   @ApiProperty({ description: 'Consumption in kilowatt-hour per hour', example: 1.2 })
   consumption_kwh_h!: number;
 
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    description: 'URL of the device',
+    example: 'https://www.example.com/device/123',
+  })
+  url!: string;
+
   @IsOptional()
   @IsBoolean()
   @ApiProperty({
