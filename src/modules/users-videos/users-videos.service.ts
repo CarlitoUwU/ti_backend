@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma.service';
 import { UserVideoBaseDto } from './dto';
 import { plainToInstance } from 'class-transformer';
 import { UsersMedalsService } from '../users-medals/users-medals.service';
+import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class UsersVideosService {
@@ -14,7 +15,8 @@ export class UsersVideosService {
 
   constructor(
     private prisma: PrismaService,
-    private usersMedalsService: UsersMedalsService
+    private usersMedalsService: UsersMedalsService,
+    private dateService: DateService,
   ) { }
 
   async create(createUserVideoDto: CreateUserVideoDto): Promise<UserVideoBaseDto> {
@@ -66,7 +68,7 @@ export class UsersVideosService {
       data: {
         user_id: createUserVideoDto.user_id,
         video_id: createUserVideoDto.video_id,
-        date_seen: new Date(),
+        date_seen: this.dateService.getCurrentPeruDate(),
       },
       select: {
         user_id: true,

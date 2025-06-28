@@ -5,10 +5,14 @@ import { UpdateGoalDto } from './dto/update-goal.dto';
 import { GoalDto } from './dto/goal.dto';
 import { plainToInstance } from 'class-transformer';
 import { MonthEnum } from './dto/month.enum';
+import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class GoalsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly dateService: DateService,
+  ) { }
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
     // First, get the user's district to calculate goal_kwh
@@ -26,7 +30,7 @@ export class GoalsService {
     }
 
     // Get current month and year from system date
-    const currentDate = new Date();
+    const currentDate = this.dateService.getCurrentPeruDate();
     const currentMonth = this.getCurrentMonth(currentDate);
     const currentYear = currentDate.getFullYear();
 

@@ -3,11 +3,15 @@ import { CreateUserMedalDto } from './dto/create-user-medal.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserMedalBaseDto } from './dto';
 import { plainToInstance } from 'class-transformer';
+import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class UsersMedalsService {
 
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private dateService: DateService,
+  ) { }
 
   async create(createUserMedalDto: CreateUserMedalDto): Promise<UserMedalBaseDto> {
     // Verificar que el usuario existe
@@ -60,7 +64,7 @@ export class UsersMedalsService {
       data: {
         user_id: createUserMedalDto.user_id,
         melda_id: createUserMedalDto.melda_id,
-        achievement_date: new Date(),
+        achievement_date: this.dateService.getCurrentPeruDate(),
       },
       select: {
         user_id: true,

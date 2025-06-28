@@ -5,12 +5,14 @@ import { SavingDto } from './dto/saving.dto';
 import { plainToInstance } from 'class-transformer';
 import { MonthEnum } from '../goals/dto/month.enum';
 import { UsersService } from '../users/users.service';
+import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class SavingsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
+    private readonly dateService: DateService,
   ) { }
 
   async create(createSavingDto: CreateSavingDto): Promise<SavingDto> {
@@ -21,7 +23,7 @@ export class SavingsService {
       throw new NotFoundException(`District not found for user with ID ${createSavingDto.user_id}`);
     }
 
-    const hoy = new Date();
+    const hoy = this.dateService.getCurrentPeruDate();
     const currentYear = hoy.getFullYear();
     const currentMonth = hoy.getMonth() + 1; // getMonth() returns 0-11, so we add 1
     const month = this.getNumberMonth(currentMonth);

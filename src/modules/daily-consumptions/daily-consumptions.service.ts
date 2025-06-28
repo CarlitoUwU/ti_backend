@@ -4,10 +4,14 @@ import { CreateDailyConsumptionDto } from './dto/create-daily-consumption.dto';
 import { UpdateDailyConsumptionDto } from './dto/update-daily-consumption.dto';
 import { DailyConsumptionDto } from './dto/daily-consumption.dto';
 import { plainToInstance } from 'class-transformer';
+import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class DailyConsumptionsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly dateService: DateService,
+  ) { }
 
   async create(createDailyConsumptionDto: CreateDailyConsumptionDto): Promise<DailyConsumptionDto> {
     const user = await this.prisma.users.findUnique({
@@ -26,34 +30,25 @@ export class DailyConsumptionsService {
       throw new NotFoundException(`Device with ID ${createDailyConsumptionDto.device_id} not found`);
     }
 
+    // Obtener la fecha actual de Perú (solo fecha, sin hora)
+    const dateOnly = this.dateService.getCurrentPeruDateOnly();
+
+    // Validar duplicados por user, device y fecha
     const existingRecord = await this.prisma.daily_consumptions.findFirst({
       where: {
         user_id: createDailyConsumptionDto.user_id,
         device_id: createDailyConsumptionDto.device_id,
-        date: new Date(createDailyConsumptionDto.date),
+        date: dateOnly,
       },
     });
 
     if (existingRecord) {
       throw new ConflictException(
-        `A daily consumption record already exists for user ${createDailyConsumptionDto.user_id}, device ${createDailyConsumptionDto.device_id}, and date ${createDailyConsumptionDto.date}`
+        `A daily consumption record already exists for user ${createDailyConsumptionDto.user_id}, device ${createDailyConsumptionDto.device_id}, and date ${this.dateService.formatDateToString(dateOnly)}`
       );
     }
 
-    const existingUserRecord = await this.prisma.daily_consumptions.findFirst({
-      where: {
-        user_id: createDailyConsumptionDto.user_id,
-        date: new Date(createDailyConsumptionDto.date),
-      },
-    });
-
-    if (!existingUserRecord) {
-      // Update user's streak if this is the first record for the user on this date
-      await this.prisma.user_profiles.update({
-        where: { user_id: createDailyConsumptionDto.user_id },
-        data: { streak: { increment: 1 } },
-      });
-    }
+    // Si es el primer registro del usuario en ese día, puedes actualizar streak aquí si lo deseas
 
     const estimated_consumption = createDailyConsumptionDto.hours_use * device.consumption_kwh_h;
 
@@ -61,7 +56,7 @@ export class DailyConsumptionsService {
       data: {
         user_id: createDailyConsumptionDto.user_id,
         device_id: createDailyConsumptionDto.device_id,
-        date: new Date(createDailyConsumptionDto.date),
+        date: dateOnly,
         hours_use: createDailyConsumptionDto.hours_use,
         estimated_consumption,
         is_active: createDailyConsumptionDto.is_active ?? true,

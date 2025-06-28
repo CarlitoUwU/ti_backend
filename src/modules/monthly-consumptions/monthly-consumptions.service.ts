@@ -6,12 +6,14 @@ import { MonthlyConsumptionDto } from './dto/monthly-consumption.dto';
 import { plainToInstance } from 'class-transformer';
 import { MonthEnum } from '../goals/dto/month.enum';
 import { UsersService } from '../users/users.service';
+import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class MonthlyConsumptionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
+    private readonly dateService: DateService,
   ) { }
 
   async create(createMonthlyConsumptionDto: CreateMonthlyConsumptionDto): Promise<MonthlyConsumptionDto> {
@@ -23,7 +25,7 @@ export class MonthlyConsumptionsService {
     }
 
     // Get current month and year
-    const currentDate = new Date();
+    const currentDate = this.dateService.getCurrentPeruDate();
     const currentMonth = this.getCurrentMonth(currentDate);
     const currentYear = currentDate.getFullYear();
 

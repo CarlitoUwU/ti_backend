@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
-  IsDateString,
   IsNumber,
   IsOptional,
   IsUUID,
@@ -21,15 +20,6 @@ export class CreateDailyConsumptionDto {
     example: '550e8400-e29b-41d4-a716-446655440002'
   })
   device_id!: string;
-
-  @IsDateString()
-  @ApiProperty({
-    description: 'Date of consumption',
-    example: '2025-06-26',
-    type: String,
-    format: 'date',
-  })
-  date!: string;
 
   @IsNumber()
   @ApiProperty({

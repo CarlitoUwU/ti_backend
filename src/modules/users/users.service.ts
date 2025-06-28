@@ -5,6 +5,7 @@ import { UserProfilesService } from '../user_profiles/user_profiles.service';
 import { UserBaseDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { parse } from 'path';
+import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +13,7 @@ export class UsersService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly userProfilesService: UserProfilesService,
+    private readonly dateService: DateService,
   ) { }
 
   async create(createUserDto: CreateUserDto) {
@@ -33,9 +35,9 @@ export class UsersService {
         password: hashedPassword,
         district_id: createUserDto.district_id,
         is_active: createUserDto.is_active,
-        created_at: new Date(),
-        updated_at: new Date(),
-        last_login: new Date(),
+        created_at: this.dateService.getCurrentPeruDate(),
+        updated_at: this.dateService.getCurrentPeruDate(),
+        last_login: this.dateService.getCurrentPeruDate(),
       },
     });
 
@@ -103,7 +105,7 @@ export class UsersService {
       where: { id },
       data: {
         is_active: false,
-        updated_at: new Date(),
+        updated_at: this.dateService.getCurrentPeruDate(),
       },
       include: {
         user_profiles: true,
@@ -124,7 +126,7 @@ export class UsersService {
       where: { id },
       data: {
         is_active: true,
-        updated_at: new Date(),
+        updated_at: this.dateService.getCurrentPeruDate(),
       },
       include: {
         user_profiles: true,
@@ -173,7 +175,7 @@ export class UsersService {
     // Update last login time
     await this.prismaService.users.update({
       where: { id: user.id },
-      data: { last_login: new Date() },
+      data: { last_login: this.dateService.getCurrentPeruDate() },
     });
 
     return this.toUserDto(user);
