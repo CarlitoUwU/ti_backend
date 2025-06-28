@@ -1,15 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { UpdateGoalDto } from './dto/update-goal.dto';
 import { GoalDto } from './dto/goal.dto';
 import { plainToInstance } from 'class-transformer';
+import { MonthEnum } from './dto/month.enum';
 
 @Injectable()
 export class GoalsService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
+    // First, get the user's district to calculate goal_kwh
     const user = await this.prisma.users.findUnique({
       where: { id: createGoalDto.user_id },
       include: { districts: true },
@@ -19,32 +21,39 @@ export class GoalsService {
       throw new NotFoundException(`User with ID ${createGoalDto.user_id} not found`);
     }
 
+    if (!user.districts) {
+      throw new NotFoundException(`District not found for user with ID ${createGoalDto.user_id}`);
+    }
+
+    // Get current month and year from system date
+    const currentDate = new Date();
+    const currentMonth = this.getCurrentMonth(currentDate);
+    const currentYear = currentDate.getFullYear();
+
+    // Check if a goal already exists for the same user, month, and year
     const existingGoal = await this.prisma.goals.findFirst({
       where: {
         user_id: createGoalDto.user_id,
-        month: createGoalDto.month as any,
-        year: createGoalDto.year,
+        month: currentMonth,
+        year: currentYear,
         is_active: true,
       },
     });
 
     if (existingGoal) {
-      throw new NotFoundException(`Goal already exists for user ${createGoalDto.user_id} for the month ${createGoalDto.month} and year ${createGoalDto.year}`);
+      throw new ConflictException(`Goal already exists for user ${createGoalDto.user_id} for the month ${currentMonth} and year ${currentYear}`);
     }
 
-    if (!user.districts) {
-      throw new NotFoundException(`District not found for user with ID ${createGoalDto.user_id}`);
-    }
-
-    const estimated_cost = createGoalDto.goal_kwh * user.districts.fee_kwh;
+    // Calculate goal_kwh based on estimated_cost / district's fee_kwh
+    const goal_kwh = createGoalDto.estimated_cost / user.districts.fee_kwh;
 
     const goal = await this.prisma.goals.create({
       data: {
         user_id: createGoalDto.user_id,
-        month: createGoalDto.month,
-        year: createGoalDto.year,
-        goal_kwh: createGoalDto.goal_kwh,
-        estimated_cost,
+        month: currentMonth,
+        year: currentYear,
+        goal_kwh: Math.round(goal_kwh * 100) / 100, // Round to 2 decimal places
+        estimated_cost: createGoalDto.estimated_cost,
         is_active: createGoalDto.is_active ?? true,
       },
     });
@@ -58,6 +67,24 @@ export class GoalsService {
       estimated_cost: goal.estimated_cost,
       is_active: goal.is_active,
     });
+  }
+
+  private getCurrentMonth(date: Date): MonthEnum {
+    const monthNames: MonthEnum[] = [
+      MonthEnum.January,
+      MonthEnum.February,
+      MonthEnum.March,
+      MonthEnum.April,
+      MonthEnum.May,
+      MonthEnum.June,
+      MonthEnum.July,
+      MonthEnum.August,
+      MonthEnum.September,
+      MonthEnum.October,
+      MonthEnum.November,
+      MonthEnum.December,
+    ];
+    return monthNames[date.getMonth()];
   }
 
   async findAll(): Promise<GoalDto[]> {

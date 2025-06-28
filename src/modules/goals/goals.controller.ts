@@ -33,14 +33,15 @@ export class GoalsController {
   constructor(private readonly goalsService: GoalsService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new goal' })
+  @ApiOperation({ summary: 'Create a new goal (automatic calculation for current month/year)' })
   @ApiResponse({
     status: 201,
-    description: 'Goal successfully created',
+    description: 'Goal successfully created with automatic calculations. Month/year from current date, goal_kwh calculated from estimated_cost and district fee.',
     type: GoalDto,
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User or District not found' })
+  @ApiResponse({ status: 409, description: 'Goal already exists for this user and current month/year' })
   async create(@Body() createGoalDto: CreateGoalDto): Promise<GoalDto> {
     return this.goalsService.create(createGoalDto);
   }
