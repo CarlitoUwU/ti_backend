@@ -6,6 +6,7 @@ import {
   IsString,
   IsUUID,
   IsArray,
+  IsInt,
 } from 'class-validator';
 
 export class UserProfileDto {
@@ -36,6 +37,14 @@ export class UserProfileDto {
     type: [String],
   })
   tastes?: string[];
+
+  @IsInt()
+  @ApiProperty({
+    description: 'Streak of consecutive active days',
+    example: 0,
+    default: 0,
+  })
+  streak!: number;
 
   @IsBoolean()
   @ApiProperty({

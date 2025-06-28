@@ -16,6 +16,7 @@ export class UserProfilesService {
         first_name: createUserProfileDto.first_name,
         last_name: createUserProfileDto.last_name,
         tastes: createUserProfileDto.tastes,
+        streak: 0,
         is_active: createUserProfileDto.is_active,
       }
     });
@@ -25,6 +26,7 @@ export class UserProfilesService {
       first_name: data.first_name,
       last_name: data.last_name,
       tastes: data.tastes,
+      streak: data.streak,
       is_active: data.is_active,
     });
   }
@@ -37,6 +39,7 @@ export class UserProfilesService {
         first_name: true,
         last_name: true,
         tastes: true,
+        streak: true,
         is_active: true,
       }
     });
@@ -50,6 +53,7 @@ export class UserProfilesService {
       first_name: data.first_name,
       last_name: data.last_name,
       tastes: data.tastes,
+      streak: data.streak,
       is_active: data.is_active,
     });
   }
@@ -63,6 +67,7 @@ export class UserProfilesService {
         first_name: true,
         last_name: true,
         tastes: true,
+        streak: true,
         is_active: true,
       }
     });
@@ -75,6 +80,7 @@ export class UserProfilesService {
       first_name: data.first_name,
       last_name: data.last_name,
       tastes: data.tastes,
+      streak: data.streak,
       is_active: data.is_active,
     });
   }
@@ -88,6 +94,7 @@ export class UserProfilesService {
         first_name: true,
         last_name: true,
         tastes: true,
+        streak: true,
         is_active: true,
       }
     });
@@ -100,6 +107,7 @@ export class UserProfilesService {
       first_name: data.first_name,
       last_name: data.last_name,
       tastes: data.tastes,
+      streak: data.streak,
       is_active: data.is_active,
     });
   }
@@ -112,6 +120,7 @@ export class UserProfilesService {
         first_name: true,
         last_name: true,
         tastes: true,
+        streak: true,
         is_active: true,
       }
     });
@@ -121,6 +130,7 @@ export class UserProfilesService {
       first_name: data.first_name,
       last_name: data.last_name,
       tastes: data.tastes,
+      streak: data.streak,
       is_active: data.is_active,
     });
   }
