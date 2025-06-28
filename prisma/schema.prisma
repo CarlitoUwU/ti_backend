@@ -8,31 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum month_enum {
-  January
-  February
-  March
-  April
-  May
-  June
-  July
-  August
-  September
-  October
-  November
-  December
-}
-
 model daily_consumptions {
-  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id               String    @db.Uuid
-  device_id             String    @db.Uuid
-  date                  DateTime  @db.Date
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id               String   @db.Uuid
+  device_id             String   @db.Uuid
+  date                  DateTime @db.Date
   hours_use             Float
   estimated_consumption Float
-  is_active             Boolean   @default(true)
-  devices               devices   @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users                 users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  is_active             Boolean  @default(true)
+  devices               devices  @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                 users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model devices {
@@ -40,26 +25,27 @@ model devices {
   name               String               @db.VarChar
   consumption_kwh_h  Float
   is_active          Boolean              @default(true)
+  url                String               @db.VarChar
   daily_consumptions daily_consumptions[]
 }
 
 model districts {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar
+  id        Int     @id @default(autoincrement())
+  name      String  @db.VarChar
   fee_kwh   Float
-  is_active Boolean  @default(true)
+  is_active Boolean @default(true)
   users     users[]
 }
 
 model goals {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id        String   @db.Uuid
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String     @db.Uuid
   month          month_enum
   year           Int
   goal_kwh       Float
   estimated_cost Float
-  is_active      Boolean  @default(true)
-  users          users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  is_active      Boolean    @default(true)
+  users          users      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model medals {
@@ -72,15 +58,15 @@ model medals {
 }
 
 model monthly_consumptions {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id     String   @db.Uuid
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String     @db.Uuid
   month       month_enum
   year        Int
   kwh_total   Float
   kwh_cost    Float
   amount_paid Float
-  is_active   Boolean  @default(true)
-  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  is_active   Boolean    @default(true)
+  users       users      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model notifications {
@@ -89,20 +75,20 @@ model notifications {
   name        String   @db.VarChar
   description String   @db.VarChar
   created_at  DateTime @default(now()) @db.Date
-  was_read    Boolean  @default(false)
   is_active   Boolean  @default(true)
+  was_read    Boolean  @default(false)
   users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model savings {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id     String   @db.Uuid
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String     @db.Uuid
   month       month_enum
   year        Int
   savings_kwh Float
   savings_sol Float
-  is_active   Boolean  @default(true)
-  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  is_active   Boolean    @default(true)
+  users       users      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model user_profiles {
@@ -122,15 +108,15 @@ model users {
   district_id          Int
   is_active            Boolean                @default(true)
   created_at           DateTime               @default(now())
-  updated_at           DateTime               
-  last_login           DateTime               
+  updated_at           DateTime
+  last_login           DateTime
   daily_consumptions   daily_consumptions[]
   goals                goals[]
   monthly_consumptions monthly_consumptions[]
   notifications        notifications[]
   savings              savings[]
   user_profiles        user_profiles?
-  districts            districts?             @relation(fields: [district_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  districts            districts              @relation(fields: [district_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users_medals         users_medals[]
   users_videos         users_videos[]
 }
@@ -164,4 +150,19 @@ model videos {
   duration_seg Int
   is_active    Boolean        @default(true)
   users_videos users_videos[]
+}
+
+enum month_enum {
+  January
+  February
+  March
+  April
+  May
+  June
+  July
+  August
+  September
+  October
+  November
+  December
 }
