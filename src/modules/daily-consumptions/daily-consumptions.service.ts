@@ -5,12 +5,14 @@ import { UpdateDailyConsumptionDto } from './dto/update-daily-consumption.dto';
 import { DailyConsumptionDto } from './dto/daily-consumption.dto';
 import { plainToInstance } from 'class-transformer';
 import { DateService } from '../../common/services/date.service';
+import { MonthlyConsumptionsService } from '../monthly-consumptions/monthly-consumptions.service';
 
 @Injectable()
 export class DailyConsumptionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly dateService: DateService,
+    private readonly monthlyConsumptionsService: MonthlyConsumptionsService,
   ) { }
 
   async create(createDailyConsumptionDto: CreateDailyConsumptionDto): Promise<DailyConsumptionDto> {
@@ -79,6 +81,9 @@ export class DailyConsumptionsService {
         is_active: createDailyConsumptionDto.is_active ?? true,
       },
     });
+
+    // Actualizar automáticamente el consumo mensual
+    await this.updateMonthlyConsumptionSafely(createDailyConsumptionDto.user_id);
 
     return plainToInstance(DailyConsumptionDto, {
       id: dailyConsumption.id,
@@ -265,6 +270,8 @@ export class DailyConsumptionsService {
       }
     });
 
+    await this.updateMonthlyConsumptionSafely(data.user_id);
+
     return plainToInstance(DailyConsumptionDto, {
       id: data.id,
       user_id: data.user_id,
@@ -289,6 +296,8 @@ export class DailyConsumptionsService {
       where: { id },
       data: { is_active: true },
     });
+
+    await this.updateMonthlyConsumptionSafely(dailyConsumption.user_id);
 
     return plainToInstance(DailyConsumptionDto, {
       id: dailyConsumption.id,
@@ -315,6 +324,8 @@ export class DailyConsumptionsService {
       data: { is_active: false },
     });
 
+    await this.updateMonthlyConsumptionSafely(dailyConsumption.user_id);
+
     return {
       ...dailyConsumption,
       date: dailyConsumption.date.toISOString().split('T')[0],
@@ -334,6 +345,8 @@ export class DailyConsumptionsService {
       where: { id },
     });
 
+    await this.updateMonthlyConsumptionSafely(data.user_id);
+
     return plainToInstance(DailyConsumptionDto, {
       id: data.id,
       user_id: data.user_id,
@@ -343,5 +356,29 @@ export class DailyConsumptionsService {
       estimated_consumption: data.estimated_consumption,
       is_active: data.is_active,
     });
+  }
+
+  /**
+   * Actualiza el consumo mensual de manera segura, creando el registro si no existe
+   */
+  private async updateMonthlyConsumptionSafely(userId: string): Promise<void> {
+    try {
+      // Intentar actualizar el registro mensual existente
+      await this.monthlyConsumptionsService.updateByUser(userId);
+    } catch (error) {
+      // Si no existe un registro mensual, intentar crearlo
+      if (error.message.includes('No monthly consumption record found')) {
+        try {
+          console.log(`Creating new monthly consumption record for user ${userId}`);
+          await this.monthlyConsumptionsService.create({ user_id: userId });
+        } catch (createError) {
+          // Si falla la creación, loguear pero no interrumpir el flujo
+          console.warn(`Could not create monthly consumption for user ${userId}:`, createError.message);
+        }
+      } else {
+        // Otros errores, solo loguear
+        console.warn(`Could not update monthly consumption for user ${userId}:`, error.message);
+      }
+    }
   }
 }
