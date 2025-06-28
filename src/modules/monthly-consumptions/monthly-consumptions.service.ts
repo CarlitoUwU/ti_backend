@@ -240,7 +240,7 @@ export class MonthlyConsumptionsService {
     }));
   }
 
-  async update(id: string, updateMonthlyConsumptionDto: UpdateMonthlyConsumptionDto): Promise<MonthlyConsumptionDto> {
+  async update(id: string): Promise<MonthlyConsumptionDto> {
     // First check if the monthly consumption exists
     const existingRecord = await this.prisma.monthly_consumptions.findUnique({
       where: { id },
@@ -271,7 +271,6 @@ export class MonthlyConsumptionsService {
         kwh_total,
         kwh_cost,
         amount_paid,
-        is_active: updateMonthlyConsumptionDto.is_active ?? existingRecord.is_active,
       },
     });
 
@@ -361,6 +360,63 @@ export class MonthlyConsumptionsService {
       kwh_cost: data.kwh_cost,
       amount_paid: data.amount_paid,
       is_active: data.is_active,
+    });
+  }
+
+  async updateByUser(userId: string): Promise<MonthlyConsumptionDto> {
+    // Verify user exists and get district information
+    const user = await this.usersService.findOne(userId);
+
+    if (!user.district) {
+      throw new NotFoundException(`District not found for user with ID ${userId}`);
+    }
+
+    // Get current month and year
+    const currentDate = this.dateService.getCurrentPeruDate();
+    const currentMonth = this.getCurrentMonth(currentDate);
+    const currentYear = currentDate.getFullYear();
+
+    // Find the monthly consumption record for current month/year
+    const existingRecord = await this.prisma.monthly_consumptions.findFirst({
+      where: {
+        user_id: userId,
+        month: currentMonth,
+        year: currentYear,
+      },
+    });
+
+    if (!existingRecord) {
+      throw new NotFoundException(
+        `No monthly consumption record found for user ${userId} in ${currentMonth} ${currentYear}`
+      );
+    }
+
+    // Recalculate monthly consumption for current period
+    const { kwh_total, kwh_cost, amount_paid } = await this.calculateMonthlyConsumption(
+      userId,
+      currentMonth,
+      currentYear,
+      user.district.fee_kwh
+    );
+
+    const monthlyConsumption = await this.prisma.monthly_consumptions.update({
+      where: { id: existingRecord.id },
+      data: {
+        kwh_total,
+        kwh_cost,
+        amount_paid,
+      },
+    });
+
+    return plainToInstance(MonthlyConsumptionDto, {
+      id: monthlyConsumption.id,
+      user_id: monthlyConsumption.user_id,
+      month: monthlyConsumption.month,
+      year: monthlyConsumption.year,
+      kwh_total: monthlyConsumption.kwh_total,
+      kwh_cost: monthlyConsumption.kwh_cost,
+      amount_paid: monthlyConsumption.amount_paid,
+      is_active: monthlyConsumption.is_active,
     });
   }
 }

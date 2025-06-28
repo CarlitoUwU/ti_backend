@@ -137,9 +137,27 @@ export class MonthlyConsumptionsController {
   @ApiResponse({ status: 404, description: 'Monthly consumption record or user not found' })
   async update(
     @Param('id') id: string,
-    @Body() updateMonthlyConsumptionDto: UpdateMonthlyConsumptionDto,
   ): Promise<MonthlyConsumptionDto> {
-    return this.monthlyConsumptionsService.update(id, updateMonthlyConsumptionDto);
+    return this.monthlyConsumptionsService.update(id);
+  }
+
+  @Patch('user/:userId')
+  @ApiOperation({ summary: 'Recalculate current month consumption record for a specific user' })
+  @ApiParam({
+    name: 'userId',
+    description: 'User UUID',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Current month consumption record successfully recalculated for the user',
+    type: MonthlyConsumptionDto,
+  })
+  @ApiResponse({ status: 404, description: 'User not found or no monthly consumption record exists for current month' })
+  async updateByUser(
+    @Param('userId') userId: string,
+  ): Promise<MonthlyConsumptionDto> {
+    return this.monthlyConsumptionsService.updateByUser(userId);
   }
 
   @Patch(':id/activate')
