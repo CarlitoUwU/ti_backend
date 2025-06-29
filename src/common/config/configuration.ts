@@ -10,4 +10,15 @@ export default () => ({
   jwt: {
     secret: process.env.JWT_SECRET || 'defaultSecret',
   },
+  redis: {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    password: process.env.REDIS_PASSWORD,
+  },
+  mail: {
+    host: process.env.MAIL_HOST,
+    user: process.env.MAIL_USER,
+    password: process.env.MAIL_PASSWORD,
+    from: process.env.MAIL_FROM,
+  },
 });

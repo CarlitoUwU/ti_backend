@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserProfilesService } from '../user_profiles/user_profiles.service';
@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { parse } from 'path';
 import { DateService } from '../../common/services/date.service';
 import { MailsService } from '../mails/mails.service';
+import { RedisService } from '../../common/redis/redis.service';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
     private readonly userProfilesService: UserProfilesService,
     private readonly dateService: DateService,
     private readonly mailsService: MailsService,
+    private readonly redisService: RedisService,
   ) { }
 
   async create(createUserDto: CreateUserDto) {
@@ -217,11 +219,16 @@ export class UsersService {
       throw new NotFoundException(`User with email '${email}' not found`);
     }
 
-    const resetCode = 111111
-    await this.mailsService.sendUserResetPassword(user.username, email, resetCode);
+    // Generar código y guardarlo en Redis
+    const resetCode = await this.redisService.generateResetCode(email);
+
+    // Enviar email con el código
+    await this.mailsService.sendUserResetPassword(user.username, email, parseInt(resetCode));
 
     return {
-      message: 'Reset password email sent successfully'
+      message: 'Reset password code sent successfully',
+      email: email,
+      expiresIn: '10 minutes'
     };
   }
 
@@ -237,13 +244,18 @@ export class UsersService {
       throw new NotFoundException(`User with email '${email}' not found`);
     }
 
-    // For testing purposes, you might want to remove this in production
-    if (code !== 111111) {
-      throw new NotFoundException('Invalid reset code');
+    // Verificar código en Redis
+    const isValid = await this.redisService.verifyResetCode(email, code.toString());
+
+    if (!isValid) {
+      throw new BadRequestException('Invalid or expired reset code');
     }
 
     return {
-      message: 'Reset code verified successfully'
+      message: 'Reset code verified successfully',
+      email: email,
+      verified: true,
+      validFor: '30 minutes'
     };
   }
 
@@ -254,6 +266,15 @@ export class UsersService {
 
     if (!user) {
       throw new NotFoundException(`User with email '${email}' not found`);
+    }
+
+    // Verificar que el usuario haya verificado su código recientemente
+    const isCodeVerified = await this.redisService.isResetCodeVerified(email);
+
+    if (!isCodeVerified) {
+      throw new BadRequestException(
+        'You must verify your reset code before changing your password. Please request a new reset code.'
+      );
     }
 
     const salt = parseInt(process.env.BCRYPT_SALT || '10', 10);
@@ -271,7 +292,14 @@ export class UsersService {
       },
     });
 
-    return this.toUserDto(updatedUser);
+    // Limpiar la verificación de Redis después del reseteo exitoso
+    await this.redisService.clearResetVerification(email);
+
+    return {
+      message: 'Password reset successfully',
+      email: email,
+      user: this.toUserDto(updatedUser)
+    };
   }
 
 }
