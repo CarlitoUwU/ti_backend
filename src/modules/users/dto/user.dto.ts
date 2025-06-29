@@ -39,7 +39,7 @@ export class UserDto {
   district!: DistrictDto;
 
   @IsNotEmpty()
-  @ApiProperty({type: () => UserProfileBaseDto, description: 'User profile information'})
+  @ApiProperty({ type: () => UserProfileBaseDto, description: 'User profile information' })
   user_profile!: UserProfileBaseDto;
 
   @IsBoolean()

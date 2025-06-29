@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -15,13 +14,11 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { MonthlyConsumptionsService } from './monthly-consumptions.service';
 import { CreateMonthlyConsumptionDto } from './dto/create-monthly-consumption.dto';
 import { UpdateMonthlyConsumptionDto } from './dto/update-monthly-consumption.dto';
 import { MonthlyConsumptionDto } from './dto/monthly-consumption.dto';
-import { MonthEnum } from '../goals/dto/month.enum';
 
 @ApiTags('monthly-consumptions')
 @Controller('monthly-consumptions')
@@ -29,13 +26,17 @@ export class MonthlyConsumptionsController {
   constructor(private readonly monthlyConsumptionsService: MonthlyConsumptionsService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new monthly consumption record (automatic calculation for current month)' })
+  @ApiOperation({
+    summary: 'Create a new monthly consumption record',
+    description: 'Creates a monthly consumption record. User provides kwh_total, kwh_cost, and amount_paid. Month and year are auto-calculated from current date using Peru timezone. Only one record per user per month is allowed.'
+  })
   @ApiResponse({
     status: 201,
-    description: 'Monthly consumption record successfully created with automatic calculations',
+    description: 'Monthly consumption record successfully created',
     type: MonthlyConsumptionDto,
   })
-  @ApiResponse({ status: 404, description: 'User or District not found' })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 409, description: 'Monthly consumption record already exists for this user and current month' })
   async create(@Body() createMonthlyConsumptionDto: CreateMonthlyConsumptionDto): Promise<MonthlyConsumptionDto> {
     return this.monthlyConsumptionsService.create(createMonthlyConsumptionDto);
@@ -69,42 +70,6 @@ export class MonthlyConsumptionsController {
     return this.monthlyConsumptionsService.findByUser(userId);
   }
 
-  @Get('user/:userId/period')
-  @ApiOperation({ summary: 'Get monthly consumption records for a specific user by month and year' })
-  @ApiParam({
-    name: 'userId',
-    description: 'User UUID',
-    example: '550e8400-e29b-41d4-a716-446655440001',
-  })
-  @ApiQuery({
-    name: 'month',
-    description: 'Month name',
-    example: 'June',
-    required: true,
-    enum: MonthEnum,
-  })
-  @ApiQuery({
-    name: 'year',
-    description: 'Year',
-    example: 2025,
-    required: true,
-    type: Number,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'List of monthly consumption records for the specified user, month and year',
-    type: [MonthlyConsumptionDto],
-  })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  async findByUserAndPeriod(
-    @Param('userId') userId: string,
-    @Query('month') month: string,
-    @Query('year') year: string,
-  ): Promise<MonthlyConsumptionDto[]> {
-    const yearNumber = parseInt(year, 10);
-    return this.monthlyConsumptionsService.findByUserAndPeriod(userId, month as MonthEnum, yearNumber);
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get a monthly consumption record by ID' })
   @ApiParam({
@@ -123,7 +88,10 @@ export class MonthlyConsumptionsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Recalculate a monthly consumption record (automatic recalculation)' })
+  @ApiOperation({
+    summary: 'Update a monthly consumption record',
+    description: 'Updates an existing monthly consumption record. Can update kwh_total, kwh_cost, amount_paid, or is_active status. Month and year cannot be changed.'
+  })
   @ApiParam({
     name: 'id',
     description: 'Monthly consumption UUID',
@@ -131,72 +99,24 @@ export class MonthlyConsumptionsController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Monthly consumption record successfully recalculated',
+    description: 'Monthly consumption record successfully updated',
     type: MonthlyConsumptionDto,
   })
-  @ApiResponse({ status: 404, description: 'Monthly consumption record or user not found' })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiResponse({ status: 404, description: 'Monthly consumption record not found' })
   async update(
     @Param('id') id: string,
+    @Body() updateMonthlyConsumptionDto: UpdateMonthlyConsumptionDto,
   ): Promise<MonthlyConsumptionDto> {
-    return this.monthlyConsumptionsService.update(id);
-  }
-
-  @Patch('user/:userId')
-  @ApiOperation({ summary: 'Recalculate current month consumption record for a specific user' })
-  @ApiParam({
-    name: 'userId',
-    description: 'User UUID',
-    example: '550e8400-e29b-41d4-a716-446655440001',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Current month consumption record successfully recalculated for the user',
-    type: MonthlyConsumptionDto,
-  })
-  @ApiResponse({ status: 404, description: 'User not found or no monthly consumption record exists for current month' })
-  async updateByUser(
-    @Param('userId') userId: string,
-  ): Promise<MonthlyConsumptionDto> {
-    return this.monthlyConsumptionsService.updateByUser(userId);
-  }
-
-  @Patch(':id/activate')
-  @ApiOperation({ summary: 'Activate a monthly consumption record' })
-  @ApiParam({
-    name: 'id',
-    description: 'Monthly consumption UUID',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Monthly consumption record successfully activated',
-    type: MonthlyConsumptionDto,
-  })
-  @ApiResponse({ status: 404, description: 'Monthly consumption record not found' })
-  async activate(@Param('id') id: string): Promise<MonthlyConsumptionDto> {
-    return this.monthlyConsumptionsService.activate(id);
-  }
-
-  @Patch(':id/deactivate')
-  @ApiOperation({ summary: 'Deactivate a monthly consumption record' })
-  @ApiParam({
-    name: 'id',
-    description: 'Monthly consumption UUID',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Monthly consumption record successfully deactivated',
-    type: MonthlyConsumptionDto,
-  })
-  @ApiResponse({ status: 404, description: 'Monthly consumption record not found' })
-  async deactivate(@Param('id') id: string): Promise<MonthlyConsumptionDto> {
-    return this.monthlyConsumptionsService.deactivate(id);
+    return this.monthlyConsumptionsService.update(id, updateMonthlyConsumptionDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Delete a monthly consumption record' })
+  @ApiOperation({
+    summary: 'Delete a monthly consumption record',
+    description: 'Soft deletes a monthly consumption record by setting is_active to false'
+  })
   @ApiParam({
     name: 'id',
     description: 'Monthly consumption UUID',
@@ -205,10 +125,18 @@ export class MonthlyConsumptionsController {
   @ApiResponse({
     status: 200,
     description: 'Monthly consumption record successfully deleted',
-    type: MonthlyConsumptionDto,
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Monthly consumption record has been successfully deleted'
+        }
+      }
+    }
   })
   @ApiResponse({ status: 404, description: 'Monthly consumption record not found' })
-  async remove(@Param('id') id: string): Promise<MonthlyConsumptionDto> {
+  async remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.monthlyConsumptionsService.remove(id);
   }
 }

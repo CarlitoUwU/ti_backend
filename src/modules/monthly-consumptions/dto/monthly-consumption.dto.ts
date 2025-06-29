@@ -40,25 +40,22 @@ export class MonthlyConsumptionDto {
 
   @IsNumber()
   @ApiProperty({
-    description: 'Total kWh consumed in the month (calculated automatically)',
+    description: 'Total kWh consumed in the month (provided by user)',
     example: 156.75,
-    readOnly: true,
   })
   kwh_total!: number;
 
   @IsNumber()
   @ApiProperty({
-    description: 'Cost per kWh based on district fee (calculated automatically)',
-    example: 0.42,
-    readOnly: true,
+    description: 'Cost per kWh in soles (provided by user)',
+    example: 0.62,
   })
   kwh_cost!: number;
 
   @IsNumber()
   @ApiProperty({
-    description: 'Total amount paid for the month (calculated automatically)',
-    example: 65.84,
-    readOnly: true,
+    description: 'Total amount paid for the month in soles (provided by user)',
+    example: 97.19,
   })
   amount_paid!: number;
 
