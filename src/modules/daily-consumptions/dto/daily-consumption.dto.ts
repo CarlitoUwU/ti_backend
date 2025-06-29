@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsDateString,
-  IsNumber,
-  IsOptional,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsDateString, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 export class DailyConsumptionDto {
   @IsUUID()

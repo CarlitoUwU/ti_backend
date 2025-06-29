@@ -7,8 +7,7 @@ import { DistrictBaseDto } from './dto';
 
 @Controller('districts')
 export class DistrictsController {
-
-  constructor(private readonly districtsService: DistrictsService) { }
+  constructor(private readonly districtsService: DistrictsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new district' })

@@ -1,4 +1,4 @@
-import { OmitType } from "@nestjs/swagger";
-import { VideoDto } from "./video.dto";
+import { OmitType } from '@nestjs/swagger';
+import { VideoDto } from './video.dto';
 
-export class VideoBaseDto extends OmitType(VideoDto, []) { }
+export class VideoBaseDto extends OmitType(VideoDto, []) {}

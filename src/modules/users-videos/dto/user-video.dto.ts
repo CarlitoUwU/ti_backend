@@ -1,10 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsDateString,
-  IsInt,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsDateString, IsInt, IsUUID } from 'class-validator';
 
 export class UserVideoDto {
   @IsUUID()

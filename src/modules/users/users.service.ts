@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserProfilesService } from '../user_profiles/user_profiles.service';
@@ -11,14 +16,13 @@ import { RedisService } from '../../common/redis/redis.service';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     private readonly prismaService: PrismaService,
     private readonly userProfilesService: UserProfilesService,
     private readonly dateService: DateService,
     private readonly mailsService: MailsService,
     private readonly redisService: RedisService,
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const existingUser = await this.prismaService.users.findUnique({
@@ -59,7 +63,7 @@ export class UsersService {
         name: true,
         fee_kwh: true,
         is_active: true,
-      }
+      },
     });
 
     return this.toUserDto({
@@ -81,7 +85,7 @@ export class UsersService {
       return [];
     }
 
-    return users.map(user => this.toUserDto(user));
+    return users.map((user) => this.toUserDto(user));
   }
 
   async findOne(id: string) {
@@ -212,7 +216,7 @@ export class UsersService {
       where: { email },
       select: {
         username: true,
-      }
+      },
     });
 
     if (!user) {
@@ -228,7 +232,7 @@ export class UsersService {
     return {
       message: 'Reset password code sent successfully',
       email: email,
-      expiresIn: '10 minutes'
+      expiresIn: '10 minutes',
     };
   }
 
@@ -237,7 +241,7 @@ export class UsersService {
       where: { email },
       select: {
         username: true,
-      }
+      },
     });
 
     if (!user) {
@@ -255,7 +259,7 @@ export class UsersService {
       message: 'Reset code verified successfully',
       email: email,
       verified: true,
-      validFor: '30 minutes'
+      validFor: '30 minutes',
     };
   }
 
@@ -273,7 +277,7 @@ export class UsersService {
 
     if (!isCodeVerified) {
       throw new BadRequestException(
-        'You must verify your reset code before changing your password. Please request a new reset code.'
+        'You must verify your reset code before changing your password. Please request a new reset code.',
       );
     }
 
@@ -298,8 +302,7 @@ export class UsersService {
     return {
       message: 'Password reset successfully',
       email: email,
-      user: this.toUserDto(updatedUser)
+      user: this.toUserDto(updatedUser),
     };
   }
-
 }

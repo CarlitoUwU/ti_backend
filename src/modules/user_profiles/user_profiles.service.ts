@@ -6,8 +6,7 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserProfilesService {
-
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async create(id: string, createUserProfileDto: CreateUserProfileDto) {
     const data = await this.prismaService.user_profiles.create({
@@ -18,7 +17,7 @@ export class UserProfilesService {
         tastes: createUserProfileDto.tastes,
         streak: 0,
         is_active: createUserProfileDto.is_active,
-      }
+      },
     });
 
     return plainToInstance(UserProfileBaseDto, {
@@ -41,7 +40,7 @@ export class UserProfilesService {
         tastes: true,
         streak: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -69,7 +68,7 @@ export class UserProfilesService {
         tastes: true,
         streak: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -96,7 +95,7 @@ export class UserProfilesService {
         tastes: true,
         streak: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -122,7 +121,7 @@ export class UserProfilesService {
         tastes: true,
         streak: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserProfileBaseDto, {

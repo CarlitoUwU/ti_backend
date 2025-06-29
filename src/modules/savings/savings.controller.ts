@@ -10,13 +10,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { SavingsService } from './savings.service';
 import { CreateSavingDto } from './dto/create-saving.dto';
 import { ActivateSavingDto, DesactivateSavingDto } from './dto/update-saving.dto';
@@ -26,7 +20,7 @@ import { MonthEnum } from '../goals/dto/month.enum';
 @ApiTags('savings')
 @Controller('savings')
 export class SavingsController {
-  constructor(private readonly savingsService: SavingsService) { }
+  constructor(private readonly savingsService: SavingsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new saving record (automatic calculation)' })
@@ -35,9 +29,15 @@ export class SavingsController {
     description: 'Saving record successfully created with automatic calculations',
     type: SavingDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad Request - No active goal found for the specified period' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - No active goal found for the specified period',
+  })
   @ApiResponse({ status: 404, description: 'User or District not found' })
-  @ApiResponse({ status: 409, description: 'Saving record already exists for this user, month, and year' })
+  @ApiResponse({
+    status: 409,
+    description: 'Saving record already exists for this user, month, and year',
+  })
   async create(@Body() createSavingDto: CreateSavingDto): Promise<SavingDto> {
     return this.savingsService.create(createSavingDto);
   }
@@ -137,9 +137,7 @@ export class SavingsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request - No active goal found for recalculation' })
   @ApiResponse({ status: 404, description: 'Saving record not found' })
-  async update(
-    @Param('id') id: string,
-  ): Promise<SavingDto> {
+  async update(@Param('id') id: string): Promise<SavingDto> {
     return this.savingsService.update(id);
   }
 

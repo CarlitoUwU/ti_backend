@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-} from 'class-validator';
+import { IsBoolean } from 'class-validator';
 import { NotificationBaseDto } from '.';
 
-export class ActivateNotificationDto extends (NotificationBaseDto) {
+export class ActivateNotificationDto extends NotificationBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the notification is active',
@@ -14,7 +12,7 @@ export class ActivateNotificationDto extends (NotificationBaseDto) {
   is_active: boolean = true;
 }
 
-export class DesactivateNotificationDto extends (NotificationBaseDto) {
+export class DesactivateNotificationDto extends NotificationBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the notification is active',
@@ -24,7 +22,7 @@ export class DesactivateNotificationDto extends (NotificationBaseDto) {
   is_active: boolean = false;
 }
 
-export class MarkAsReadNotificationDto extends (NotificationBaseDto) {
+export class MarkAsReadNotificationDto extends NotificationBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the notification has been read',
@@ -34,7 +32,7 @@ export class MarkAsReadNotificationDto extends (NotificationBaseDto) {
   was_read: boolean = true;
 }
 
-export class MarkAsUnreadNotificationDto extends (NotificationBaseDto) {
+export class MarkAsUnreadNotificationDto extends NotificationBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the notification has been read',

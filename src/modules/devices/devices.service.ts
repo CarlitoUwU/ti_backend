@@ -7,8 +7,7 @@ import { url } from 'inspector';
 
 @Injectable()
 export class DevicesService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createDeviceDto: CreateDeviceDto): Promise<DeviceBaseDto> {
     const data = await this.prisma.devices.create({
@@ -22,7 +21,7 @@ export class DevicesService {
         name: true,
         consumption_kwh_h: true,
         url: true,
-      }
+      },
     });
 
     const device: DeviceBaseDto = {
@@ -31,9 +30,9 @@ export class DevicesService {
       consumption_kwh_h: data.consumption_kwh_h,
       url: data.url,
       is_active: true,
-    }
+    };
 
-    return plainToInstance(DeviceBaseDto, device)
+    return plainToInstance(DeviceBaseDto, device);
   }
 
   async findAll() {
@@ -44,10 +43,10 @@ export class DevicesService {
         consumption_kwh_h: true,
         url: true,
         is_active: true,
-      }
+      },
     });
 
-    const devices: DeviceBaseDto[] = data.map(device => ({
+    const devices: DeviceBaseDto[] = data.map((device) => ({
       id: device.id,
       name: device.name,
       consumption_kwh_h: device.consumption_kwh_h,
@@ -67,7 +66,7 @@ export class DevicesService {
         consumption_kwh_h: true,
         url: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -98,7 +97,7 @@ export class DevicesService {
         consumption_kwh_h: true,
         url: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -129,7 +128,7 @@ export class DevicesService {
         consumption_kwh_h: true,
         url: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(DeviceBaseDto, {
@@ -155,7 +154,7 @@ export class DevicesService {
         consumption_kwh_h: true,
         url: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(DeviceBaseDto, {

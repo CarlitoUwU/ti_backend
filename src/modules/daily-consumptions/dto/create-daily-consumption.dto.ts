@@ -1,23 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNumber,
-  IsOptional,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateDailyConsumptionDto {
   @IsUUID()
   @ApiProperty({
     description: 'User ID who will own the consumption record',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   user_id!: string;
 
   @IsUUID()
   @ApiProperty({
     description: 'Device ID used for consumption',
-    example: '550e8400-e29b-41d4-a716-446655440002'
+    example: '550e8400-e29b-41d4-a716-446655440002',
   })
   device_id!: string;
 

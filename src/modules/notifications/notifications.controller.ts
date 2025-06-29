@@ -2,18 +2,22 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { NotificationsService } from './notifications.service';
 import { AutomaticNotificationsService } from './automatic-notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { ActivateNotificationDto, DesactivateNotificationDto, MarkAsReadNotificationDto, MarkAsUnreadNotificationDto } from './dto/update-notification.dto';
+import {
+  ActivateNotificationDto,
+  DesactivateNotificationDto,
+  MarkAsReadNotificationDto,
+  MarkAsUnreadNotificationDto,
+} from './dto/update-notification.dto';
 import { ApiOperation, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { NotificationBaseDto } from './dto';
 
 @ApiTags('notifications')
 @Controller('notifications')
 export class NotificationsController {
-
   constructor(
     private readonly notificationsService: NotificationsService,
     private readonly automaticNotificationsService: AutomaticNotificationsService,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new notification' })
@@ -45,11 +49,12 @@ export class NotificationsController {
   @ApiParam({
     name: 'user_id',
     description: 'UUID of the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @ApiResponse({
     status: 200,
-    description: 'List of notifications for the specified user (ordered by creation date, newest first)',
+    description:
+      'List of notifications for the specified user (ordered by creation date, newest first)',
     type: [NotificationBaseDto],
   })
   @ApiResponse({ status: 404, description: 'User not found' })
@@ -139,7 +144,8 @@ export class NotificationsController {
   @Post('check-automatic/:userId')
   @ApiOperation({
     summary: 'Execute automatic notification checks for a specific user',
-    description: 'Manually triggers all automatic notification checks for a user (missing daily consumption, monthly goal, goal limits, etc.)'
+    description:
+      'Manually triggers all automatic notification checks for a user (missing daily consumption, monthly goal, goal limits, etc.)',
   })
   @ApiParam({
     name: 'userId',
@@ -154,10 +160,10 @@ export class NotificationsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Automatic notification checks completed for user'
-        }
-      }
-    }
+          example: 'Automatic notification checks completed for user',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   async checkAutomaticNotifications(@Param('userId', ParseUUIDPipe) userId: string) {
@@ -168,12 +174,13 @@ export class NotificationsController {
   @Post('check-login/:userId')
   @ApiOperation({
     summary: 'Execute login notification checks for a specific user',
-    description: 'Executes critical notification checks when user logs in (missing goal, daily consumption after 18:00, exceeded goal)'
+    description:
+      'Executes critical notification checks when user logs in (missing goal, daily consumption after 18:00, exceeded goal)',
   })
   @ApiParam({
     name: 'userId',
     description: 'UUID of the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @ApiResponse({
     status: 200,
@@ -183,10 +190,10 @@ export class NotificationsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Login notification checks completed for user'
-        }
-      }
-    }
+          example: 'Login notification checks completed for user',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   async checkLoginNotifications(@Param('userId', ParseUUIDPipe) userId: string) {
@@ -197,7 +204,8 @@ export class NotificationsController {
   @Post('check-daily-all')
   @ApiOperation({
     summary: 'Execute daily notification checks for all active users',
-    description: 'Executes daily notification checks (missing daily consumption after 18:00). Intended for cron job execution.'
+    description:
+      'Executes daily notification checks (missing daily consumption after 18:00). Intended for cron job execution.',
   })
   @ApiResponse({
     status: 200,
@@ -207,10 +215,10 @@ export class NotificationsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Daily notification checks completed for all users'
-        }
-      }
-    }
+          example: 'Daily notification checks completed for all users',
+        },
+      },
+    },
   })
   async checkDailyNotificationsForAllUsers() {
     await this.automaticNotificationsService.runDailyChecksForAllUsers();
@@ -220,7 +228,8 @@ export class NotificationsController {
   @Post('check-weekly-all')
   @ApiOperation({
     summary: 'Execute weekly notification checks for all active users',
-    description: 'Executes weekly notification checks (near goal limit, positive progress). Intended for cron job execution.'
+    description:
+      'Executes weekly notification checks (near goal limit, positive progress). Intended for cron job execution.',
   })
   @ApiResponse({
     status: 200,
@@ -230,10 +239,10 @@ export class NotificationsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Weekly notification checks completed for all users'
-        }
-      }
-    }
+          example: 'Weekly notification checks completed for all users',
+        },
+      },
+    },
   })
   async checkWeeklyNotificationsForAllUsers() {
     await this.automaticNotificationsService.runWeeklyChecksForAllUsers();
@@ -243,7 +252,8 @@ export class NotificationsController {
   @Post('check-month-end-all')
   @ApiOperation({
     summary: 'Execute month-end notification checks for all active users',
-    description: 'Executes month-end summary notifications. Intended for cron job execution on the last day of each month.'
+    description:
+      'Executes month-end summary notifications. Intended for cron job execution on the last day of each month.',
   })
   @ApiResponse({
     status: 200,
@@ -253,10 +263,10 @@ export class NotificationsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Month-end notification checks completed for all users'
-        }
-      }
-    }
+          example: 'Month-end notification checks completed for all users',
+        },
+      },
+    },
   })
   async checkMonthEndNotificationsForAllUsers() {
     await this.automaticNotificationsService.runMonthEndChecksForAllUsers();
@@ -266,7 +276,8 @@ export class NotificationsController {
   @Post('check-month-start-all')
   @ApiOperation({
     summary: 'Execute month-start notification checks for all active users',
-    description: 'Executes month-start notifications (missing monthly goal reminder). Intended for cron job execution on the first day of each month.'
+    description:
+      'Executes month-start notifications (missing monthly goal reminder). Intended for cron job execution on the first day of each month.',
   })
   @ApiResponse({
     status: 200,
@@ -276,10 +287,10 @@ export class NotificationsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Month-start notification checks completed for all users'
-        }
-      }
-    }
+          example: 'Month-start notification checks completed for all users',
+        },
+      },
+    },
   })
   async checkMonthStartNotificationsForAllUsers() {
     await this.automaticNotificationsService.runMonthStartChecksForAllUsers();
@@ -289,7 +300,8 @@ export class NotificationsController {
   @Post('check-automatic-all')
   @ApiOperation({
     summary: 'Execute automatic notification checks for all active users',
-    description: 'Manually triggers all automatic notification checks for all active users in the system'
+    description:
+      'Manually triggers all automatic notification checks for all active users in the system',
   })
   @ApiResponse({
     status: 200,
@@ -299,10 +311,10 @@ export class NotificationsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Automatic notification checks completed for all users'
-        }
-      }
-    }
+          example: 'Automatic notification checks completed for all users',
+        },
+      },
+    },
   })
   async checkAutomaticNotificationsForAllUsers() {
     await this.automaticNotificationsService.runAllChecksForAllUsers();

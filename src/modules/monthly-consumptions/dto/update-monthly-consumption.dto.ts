@@ -1,10 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsOptional,
-  IsNumber,
-  IsPositive,
-} from 'class-validator';
+import { IsBoolean, IsOptional, IsNumber, IsPositive } from 'class-validator';
 
 export class UpdateMonthlyConsumptionDto {
   @IsOptional()

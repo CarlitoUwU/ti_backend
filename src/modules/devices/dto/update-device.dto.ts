@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-} from 'class-validator';
+import { IsBoolean } from 'class-validator';
 import { DeviceBaseDto } from '.';
 
-export class ActivateDeviceDto extends (DeviceBaseDto) {
+export class ActivateDeviceDto extends DeviceBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the device is active',
@@ -14,7 +12,7 @@ export class ActivateDeviceDto extends (DeviceBaseDto) {
   is_active: boolean = true;
 }
 
-export class DesactivateDeviceDto extends (DeviceBaseDto) {
+export class DesactivateDeviceDto extends DeviceBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the device is active',

@@ -29,11 +29,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
             strict: true,
           },
         },
-
       }),
       inject: [ConfigService],
     }),
   ],
   providers: [MailsService],
 })
-export class MailsModule { }
+export class MailsModule {}

@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsNumber,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNumber, IsUUID } from 'class-validator';
 import { MonthEnum } from '../../goals/dto/month.enum';
 
 export class SavingDto {
@@ -49,7 +43,7 @@ export class SavingDto {
   @IsNumber()
   @ApiProperty({
     description: 'Savings in soles (calculated automatically based on district fee)',
-    example: 127.50,
+    example: 127.5,
     readOnly: true,
   })
   savings_sol!: number;

@@ -4,9 +4,7 @@ import { AutomaticNotificationsService } from '../../modules/notifications/autom
 
 @Injectable()
 export class TasksService {
-  constructor(
-    private readonly automaticNotificationsService: AutomaticNotificationsService,
-  ) { }
+  constructor(private readonly automaticNotificationsService: AutomaticNotificationsService) {}
 
   // Ejecutar todos los días a las 18:00 (hora de Perú)
   @Cron('0 18 * * *', {

@@ -6,13 +6,12 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class NotificationsService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createNotificationDto: CreateNotificationDto): Promise<NotificationBaseDto> {
     // Verificar que el usuario existe
     const userExists = await this.prisma.users.findUnique({
-      where: { id: createNotificationDto.user_id }
+      where: { id: createNotificationDto.user_id },
     });
 
     if (!userExists) {
@@ -32,7 +31,7 @@ export class NotificationsService {
         description: true,
         created_at: true,
         was_read: true,
-      }
+      },
     });
 
     const notification: NotificationBaseDto = {
@@ -43,9 +42,9 @@ export class NotificationsService {
       created_at: data.created_at,
       was_read: data.was_read,
       is_active: true,
-    }
+    };
 
-    return plainToInstance(NotificationBaseDto, notification)
+    return plainToInstance(NotificationBaseDto, notification);
   }
 
   async findAll() {
@@ -58,10 +57,10 @@ export class NotificationsService {
         created_at: true,
         was_read: true,
         is_active: true,
-      }
+      },
     });
 
-    const notifications: NotificationBaseDto[] = data.map(notification => ({
+    const notifications: NotificationBaseDto[] = data.map((notification) => ({
       id: notification.id,
       user_id: notification.user_id,
       name: notification.name,
@@ -85,7 +84,7 @@ export class NotificationsService {
         created_at: true,
         was_read: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -106,7 +105,7 @@ export class NotificationsService {
   async findByUserId(user_id: string) {
     // Verificar que el usuario existe
     const userExists = await this.prisma.users.findUnique({
-      where: { id: user_id }
+      where: { id: user_id },
     });
 
     if (!userExists) {
@@ -125,11 +124,11 @@ export class NotificationsService {
         is_active: true,
       },
       orderBy: {
-        created_at: 'desc'
-      }
+        created_at: 'desc',
+      },
     });
 
-    const notifications: NotificationBaseDto[] = data.map(notification => ({
+    const notifications: NotificationBaseDto[] = data.map((notification) => ({
       id: notification.id,
       user_id: notification.user_id,
       name: notification.name,
@@ -159,7 +158,7 @@ export class NotificationsService {
         created_at: true,
         was_read: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(NotificationBaseDto, {
@@ -190,7 +189,7 @@ export class NotificationsService {
         created_at: true,
         was_read: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(NotificationBaseDto, {
@@ -220,7 +219,7 @@ export class NotificationsService {
         created_at: true,
         was_read: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(NotificationBaseDto, {
@@ -251,7 +250,7 @@ export class NotificationsService {
         created_at: true,
         was_read: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(NotificationBaseDto, {
@@ -282,7 +281,7 @@ export class NotificationsService {
         created_at: true,
         was_read: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(NotificationBaseDto, {
@@ -304,7 +303,7 @@ export class NotificationsService {
     userId: string,
     name: string,
     description: string,
-    type: string
+    type: string,
   ): Promise<void> {
     try {
       // Verificar si ya existe una notificación similar hoy para evitar spam

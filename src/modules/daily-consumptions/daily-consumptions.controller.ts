@@ -11,13 +11,7 @@ import {
   HttpStatus,
   Put,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { DailyConsumptionsService } from './daily-consumptions.service';
 import { CreateDailyConsumptionDto } from './dto/create-daily-consumption.dto';
 import { UpdateDailyConsumptionDto } from './dto/update-daily-consumption.dto';
@@ -26,7 +20,7 @@ import { DailyConsumptionDto } from './dto/daily-consumption.dto';
 @ApiTags('daily-consumptions')
 @Controller('daily-consumptions')
 export class DailyConsumptionsController {
-  constructor(private readonly dailyConsumptionsService: DailyConsumptionsService) { }
+  constructor(private readonly dailyConsumptionsService: DailyConsumptionsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new daily consumption record' })
@@ -37,8 +31,13 @@ export class DailyConsumptionsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'User or Device not found' })
-  @ApiResponse({ status: 409, description: 'Daily consumption record already exists for this user, device, and date' })
-  async create(@Body() createDailyConsumptionDto: CreateDailyConsumptionDto): Promise<DailyConsumptionDto> {
+  @ApiResponse({
+    status: 409,
+    description: 'Daily consumption record already exists for this user, device, and date',
+  })
+  async create(
+    @Body() createDailyConsumptionDto: CreateDailyConsumptionDto,
+  ): Promise<DailyConsumptionDto> {
     return this.dailyConsumptionsService.create(createDailyConsumptionDto);
   }
 
@@ -169,7 +168,10 @@ export class DailyConsumptionsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'Daily consumption record not found' })
-  @ApiResponse({ status: 409, description: 'Daily consumption record already exists for this user, device, and date' })
+  @ApiResponse({
+    status: 409,
+    description: 'Daily consumption record already exists for this user, device, and date',
+  })
   async update(
     @Param('id') id: string,
     @Body() updateDailyConsumptionDto: UpdateDailyConsumptionDto,

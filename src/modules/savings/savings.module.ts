@@ -10,4 +10,4 @@ import { UsersModule } from '../users/users.module';
   providers: [SavingsService, PrismaService],
   exports: [SavingsService],
 })
-export class SavingsModule { }
+export class SavingsModule {}

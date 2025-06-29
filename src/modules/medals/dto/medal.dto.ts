@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
 export class MedalDto {
   @IsInt()

@@ -8,4 +8,4 @@ import { ChatbotController } from './chatbot.controller';
   providers: [ChatbotService],
   controllers: [ChatbotController],
 })
-export class ChatbotModule { }
+export class ChatbotModule {}

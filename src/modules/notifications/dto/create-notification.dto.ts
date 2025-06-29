@@ -1,15 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateNotificationDto {
   @IsUUID()
-  @ApiProperty({ description: 'User ID who will receive the notification', example: '550e8400-e29b-41d4-a716-446655440001' })
+  @ApiProperty({
+    description: 'User ID who will receive the notification',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
   user_id!: string;
 
   @IsNotEmpty()
@@ -19,7 +16,10 @@ export class CreateNotificationDto {
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ description: 'Description of the notification', example: 'Your monthly energy report is ready to view' })
+  @ApiProperty({
+    description: 'Description of the notification',
+    example: 'Your monthly energy report is ready to view',
+  })
   description!: string;
 
   @IsOptional()

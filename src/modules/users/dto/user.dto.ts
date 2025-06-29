@@ -14,7 +14,10 @@ import { UserProfileBaseDto } from 'src/modules/user_profiles/dto';
 
 export class UserDto {
   @IsUUID()
-  @ApiProperty({ description: 'Unique UUID identifier for the user', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' })
+  @ApiProperty({
+    description: 'Unique UUID identifier for the user',
+    example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  })
   id!: string;
 
   @IsNotEmpty()
@@ -51,7 +54,10 @@ export class UserDto {
   created_at!: Date;
 
   @IsDate()
-  @ApiProperty({ description: 'Date when the user was last updated', example: '2025-06-25T00:00:00Z' })
+  @ApiProperty({
+    description: 'Date when the user was last updated',
+    example: '2025-06-25T00:00:00Z',
+  })
   updated_at!: Date;
 
   @IsDate()

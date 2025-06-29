@@ -3,10 +3,9 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailsService {
-  constructor(private mailerService: MailerService) { }
+  constructor(private mailerService: MailerService) {}
 
-  async sendUserResetPassword(username: string, email: string, code:number) {
-
+  async sendUserResetPassword(username: string, email: string, code: number) {
     await this.mailerService.sendMail({
       to: email,
       subject: 'Recuperación de cuenta',
@@ -15,7 +14,7 @@ export class MailsService {
         username,
         email,
         code,
-      }
-    })
+      },
+    });
   }
 }

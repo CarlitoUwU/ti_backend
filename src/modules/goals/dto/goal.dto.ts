@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsNumber,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNumber, IsUUID } from 'class-validator';
 import { MonthEnum } from './month.enum';
 
 export class GoalDto {

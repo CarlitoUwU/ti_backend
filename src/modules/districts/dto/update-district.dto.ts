@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-} from 'class-validator';
+import { IsBoolean } from 'class-validator';
 import { DistrictBaseDto } from '.';
 
-export class ActivateDistrictDto extends (DistrictBaseDto) {
+export class ActivateDistrictDto extends DistrictBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the district is active',
@@ -14,7 +12,7 @@ export class ActivateDistrictDto extends (DistrictBaseDto) {
   is_active: boolean = true;
 }
 
-export class DesactivateDistrictDto extends (DistrictBaseDto) {
+export class DesactivateDistrictDto extends DistrictBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the district is active',

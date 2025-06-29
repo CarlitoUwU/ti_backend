@@ -5,7 +5,7 @@ import { ChatBotMessageDto } from './dto/chatbot.dto';
 
 @Controller('chatbot')
 export class ChatbotController {
-  constructor(private readonly chatbotService: ChatbotService) { }
+  constructor(private readonly chatbotService: ChatbotService) {}
 
   @Post('message')
   @ApiOperation({ summary: 'Send a message to the chatbot' })

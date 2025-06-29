@@ -9,4 +9,4 @@ import { PrismaService } from 'src/prisma.service';
   providers: [NotificationsService, AutomaticNotificationsService, PrismaService],
   exports: [NotificationsService, AutomaticNotificationsService],
 })
-export class NotificationsModule { }
+export class NotificationsModule {}

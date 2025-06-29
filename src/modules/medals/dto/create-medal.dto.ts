@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateMedalDto {
   @IsNotEmpty()
@@ -15,11 +9,17 @@ export class CreateMedalDto {
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ description: 'Description of the medal', example: 'Awarded for reducing energy consumption by 20%' })
+  @ApiProperty({
+    description: 'Description of the medal',
+    example: 'Awarded for reducing energy consumption by 20%',
+  })
   description!: string;
 
   @IsUrl()
-  @ApiProperty({ description: 'URL of the medal image', example: 'https://example.com/images/eco-champion.png' })
+  @ApiProperty({
+    description: 'URL of the medal image',
+    example: 'https://example.com/images/eco-champion.png',
+  })
   url_img!: string;
 
   @IsOptional()

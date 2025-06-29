@@ -7,8 +7,7 @@ import { MedalBaseDto } from './dto';
 
 @Controller('medals')
 export class MedalsController {
-
-  constructor(private readonly medalsService: MedalsService) { }
+  constructor(private readonly medalsService: MedalsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new medal' })

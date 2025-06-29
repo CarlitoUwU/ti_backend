@@ -10,7 +10,7 @@ export class AutomaticNotificationsService {
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
     private readonly dateService: DateService,
-  ) { }
+  ) {}
 
   /**
    * Verifica si el usuario no ha ingresado su consumo diario y ya son más de las 18:00
@@ -39,7 +39,7 @@ export class AutomaticNotificationsService {
           userId,
           'Recordatorio: Consumo Diario Pendiente',
           '¡No olvides registrar tu consumo energético de hoy! Es importante mantener el seguimiento para alcanzar tus metas de ahorro.',
-          'MISSING_DAILY_CONSUMPTION'
+          'MISSING_DAILY_CONSUMPTION',
         );
       }
     } catch (error) {
@@ -71,7 +71,7 @@ export class AutomaticNotificationsService {
           userId,
           'Meta Mensual Faltante',
           `¡Define tu meta de consumo energético para ${currentMonth} ${currentYear}! Una meta clara te ayudará a controlar mejor tu consumo y ahorrar en tu factura.`,
-          'MISSING_MONTHLY_GOAL'
+          'MISSING_MONTHLY_GOAL',
         );
       }
     } catch (error) {
@@ -117,7 +117,7 @@ export class AutomaticNotificationsService {
 
       const totalConsumption = monthlyConsumptions.reduce(
         (sum, consumption) => sum + consumption.estimated_consumption,
-        0
+        0,
       );
 
       // Verificar si está en el 80% de la meta
@@ -131,7 +131,7 @@ export class AutomaticNotificationsService {
           userId,
           '⚠️ Cerca del Límite de Meta',
           `¡Atención! Has usado ${percentageUsed}% de tu meta mensual. Te quedan ${remainingKwh.toFixed(2)} kWh disponibles. ¡Cuida tu consumo para mantenerte dentro de la meta!`,
-          'NEAR_GOAL_LIMIT'
+          'NEAR_GOAL_LIMIT',
         );
       }
     } catch (error) {
@@ -177,19 +177,21 @@ export class AutomaticNotificationsService {
 
       const totalConsumption = monthlyConsumptions.reduce(
         (sum, consumption) => sum + consumption.estimated_consumption,
-        0
+        0,
       );
 
       // Verificar si superó la meta
       if (totalConsumption > goal.goal_kwh) {
         const excess = totalConsumption - goal.goal_kwh;
-        const percentageExceeded = Math.round(((totalConsumption - goal.goal_kwh) / goal.goal_kwh) * 100);
+        const percentageExceeded = Math.round(
+          ((totalConsumption - goal.goal_kwh) / goal.goal_kwh) * 100,
+        );
 
         await this.notificationsService.createAutomaticNotification(
           userId,
           '🚨 Meta Superada',
           `Has superado tu meta mensual por ${excess.toFixed(2)} kWh (${percentageExceeded}% más). Considera ajustar tus hábitos de consumo para el resto del mes y revisa tu próxima meta.`,
-          'GOAL_EXCEEDED'
+          'GOAL_EXCEEDED',
         );
       }
     } catch (error) {
@@ -217,15 +219,22 @@ export class AutomaticNotificationsService {
       });
 
       if (savings && savings.savings_kwh > 0) {
-        const totalConsumption = await this.getTotalConsumptionForMonth(userId, currentYear, currentDate.getMonth());
-        const savingsPercentage = Math.round((savings.savings_kwh / (savings.savings_kwh + totalConsumption)) * 100);
+        const totalConsumption = await this.getTotalConsumptionForMonth(
+          userId,
+          currentYear,
+          currentDate.getMonth(),
+        );
+        const savingsPercentage = Math.round(
+          (savings.savings_kwh / (savings.savings_kwh + totalConsumption)) * 100,
+        );
 
-        if (savingsPercentage >= 15) { // Si está ahorrando más del 15%
+        if (savingsPercentage >= 15) {
+          // Si está ahorrando más del 15%
           await this.notificationsService.createAutomaticNotification(
             userId,
             '🎉 ¡Excelente Progreso!',
             `¡Felicitaciones! Estás ahorrando ${savings.savings_kwh.toFixed(2)} kWh este mes (${savingsPercentage}% de eficiencia). ¡Sigue así para maximizar tus ahorros!`,
-            'POSITIVE_PROGRESS'
+            'POSITIVE_PROGRESS',
           );
         }
       }
@@ -269,7 +278,7 @@ export class AutomaticNotificationsService {
           userId,
           'Resumen Mensual',
           message,
-          'MONTH_END_SUMMARY'
+          'MONTH_END_SUMMARY',
         );
       }
     } catch (error) {
@@ -345,10 +354,7 @@ export class AutomaticNotificationsService {
       console.log(`Running weekly notification checks for ${activeUsers.length} users...`);
 
       for (const user of activeUsers) {
-        await Promise.all([
-          this.checkNearGoalLimit(user.id),
-          this.checkPositiveProgress(user.id),
-        ]);
+        await Promise.all([this.checkNearGoalLimit(user.id), this.checkPositiveProgress(user.id)]);
       }
 
       console.log('Weekly notification checks completed.');
@@ -440,9 +446,18 @@ export class AutomaticNotificationsService {
   // Métodos auxiliares
   private getCurrentMonth(date: Date): MonthEnum {
     const monthNames: MonthEnum[] = [
-      MonthEnum.January, MonthEnum.February, MonthEnum.March, MonthEnum.April,
-      MonthEnum.May, MonthEnum.June, MonthEnum.July, MonthEnum.August,
-      MonthEnum.September, MonthEnum.October, MonthEnum.November, MonthEnum.December,
+      MonthEnum.January,
+      MonthEnum.February,
+      MonthEnum.March,
+      MonthEnum.April,
+      MonthEnum.May,
+      MonthEnum.June,
+      MonthEnum.July,
+      MonthEnum.August,
+      MonthEnum.September,
+      MonthEnum.October,
+      MonthEnum.November,
+      MonthEnum.December,
     ];
     return monthNames[date.getMonth()];
   }
@@ -452,7 +467,11 @@ export class AutomaticNotificationsService {
     return date.getDate() === lastDay.getDate();
   }
 
-  private async getTotalConsumptionForMonth(userId: string, year: number, month: number): Promise<number> {
+  private async getTotalConsumptionForMonth(
+    userId: string,
+    year: number,
+    month: number,
+  ): Promise<number> {
     const startDate = new Date(year, month, 1);
     const endDate = new Date(year, month + 1, 0);
 

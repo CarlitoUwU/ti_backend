@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersVideosService } from './users-videos.service';
 import { CreateUserVideoDto } from './dto/create-user-video.dto';
 import { ActivateUserVideoDto, DesactivateUserVideoDto } from './dto/update-user-video.dto';
@@ -7,8 +17,7 @@ import { UserVideoBaseDto } from './dto';
 
 @Controller('users-videos')
 export class UsersVideosController {
-
-  constructor(private readonly usersVideosService: UsersVideosService) { }
+  constructor(private readonly usersVideosService: UsersVideosService) {}
 
   @Post()
   @ApiOperation({ summary: 'Register that a user watched a video' })
@@ -40,11 +49,12 @@ export class UsersVideosController {
   @ApiParam({
     name: 'user_id',
     description: 'UUID of the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @ApiResponse({
     status: 200,
-    description: 'List of videos watched by the specified user (ordered by date seen, newest first)',
+    description:
+      'List of videos watched by the specified user (ordered by date seen, newest first)',
     type: [UserVideoBaseDto],
   })
   @ApiResponse({ status: 404, description: 'User not found' })
@@ -58,11 +68,12 @@ export class UsersVideosController {
   @ApiParam({
     name: 'video_id',
     description: 'ID of the video',
-    example: 1
+    example: 1,
   })
   @ApiResponse({
     status: 200,
-    description: 'List of users who watched the specified video (ordered by date seen, newest first)',
+    description:
+      'List of users who watched the specified video (ordered by date seen, newest first)',
     type: [UserVideoBaseDto],
   })
   @ApiResponse({ status: 404, description: 'Video not found' })
@@ -76,12 +87,12 @@ export class UsersVideosController {
   @ApiParam({
     name: 'user_id',
     description: 'UUID of the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @ApiParam({
     name: 'video_id',
     description: 'ID of the video',
-    example: 1
+    example: 1,
   })
   @ApiResponse({
     status: 200,
@@ -92,7 +103,7 @@ export class UsersVideosController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   findOne(
     @Param('user_id', ParseUUIDPipe) user_id: string,
-    @Param('video_id', ParseIntPipe) video_id: number
+    @Param('video_id', ParseIntPipe) video_id: number,
   ) {
     return this.usersVideosService.findOne(user_id, video_id);
   }
@@ -102,12 +113,12 @@ export class UsersVideosController {
   @ApiParam({
     name: 'user_id',
     description: 'UUID of the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @ApiParam({
     name: 'video_id',
     description: 'ID of the video',
-    example: 1
+    example: 1,
   })
   @ApiResponse({
     status: 200,
@@ -118,7 +129,7 @@ export class UsersVideosController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   activate(
     @Param('user_id', ParseUUIDPipe) user_id: string,
-    @Param('video_id', ParseIntPipe) video_id: number
+    @Param('video_id', ParseIntPipe) video_id: number,
   ) {
     return this.usersVideosService.activate(user_id, video_id);
   }
@@ -128,12 +139,12 @@ export class UsersVideosController {
   @ApiParam({
     name: 'user_id',
     description: 'UUID of the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @ApiParam({
     name: 'video_id',
     description: 'ID of the video',
-    example: 1
+    example: 1,
   })
   @ApiResponse({
     status: 200,
@@ -144,7 +155,7 @@ export class UsersVideosController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   desactivate(
     @Param('user_id', ParseUUIDPipe) user_id: string,
-    @Param('video_id', ParseIntPipe) video_id: number
+    @Param('video_id', ParseIntPipe) video_id: number,
   ) {
     return this.usersVideosService.desactivate(user_id, video_id);
   }
@@ -154,12 +165,12 @@ export class UsersVideosController {
   @ApiParam({
     name: 'user_id',
     description: 'UUID of the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @ApiParam({
     name: 'video_id',
     description: 'ID of the video',
-    example: 1
+    example: 1,
   })
   @ApiResponse({
     status: 200,
@@ -170,7 +181,7 @@ export class UsersVideosController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   remove(
     @Param('user_id', ParseUUIDPipe) user_id: string,
-    @Param('video_id', ParseIntPipe) video_id: number
+    @Param('video_id', ParseIntPipe) video_id: number,
   ) {
     return this.usersVideosService.remove(user_id, video_id);
   }

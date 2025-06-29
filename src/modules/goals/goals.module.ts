@@ -10,4 +10,4 @@ import { NotificationsModule } from '../notifications/notifications.module';
   providers: [GoalsService, PrismaService],
   exports: [GoalsService],
 })
-export class GoalsModule { }
+export class GoalsModule {}

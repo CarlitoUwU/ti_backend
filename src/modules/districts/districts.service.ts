@@ -6,8 +6,7 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class DistrictsService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createDistrictDto: CreateDistrictDto): Promise<DistrictBaseDto> {
     const data = await this.prisma.districts.create({
@@ -19,7 +18,7 @@ export class DistrictsService {
         id: true,
         name: true,
         fee_kwh: true,
-      }
+      },
     });
 
     const district: DistrictBaseDto = {
@@ -27,9 +26,9 @@ export class DistrictsService {
       name: data.name,
       fee_kwh: data.fee_kwh,
       is_active: true,
-    }
+    };
 
-    return plainToInstance(DistrictBaseDto, district)
+    return plainToInstance(DistrictBaseDto, district);
   }
 
   async findAll() {
@@ -39,10 +38,10 @@ export class DistrictsService {
         name: true,
         fee_kwh: true,
         is_active: true,
-      }
+      },
     });
 
-    const districts: DistrictBaseDto[] = data.map(district => ({
+    const districts: DistrictBaseDto[] = data.map((district) => ({
       id: district.id,
       name: district.name,
       fee_kwh: district.fee_kwh,
@@ -60,7 +59,7 @@ export class DistrictsService {
         name: true,
         fee_kwh: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -84,7 +83,7 @@ export class DistrictsService {
         name: true,
         fee_kwh: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -108,7 +107,7 @@ export class DistrictsService {
         name: true,
         fee_kwh: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -131,7 +130,7 @@ export class DistrictsService {
         name: true,
         fee_kwh: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {

@@ -8,4 +8,4 @@ import { UsersMedalsService } from '../users-medals/users-medals.service';
   controllers: [UsersVideosController],
   providers: [UsersVideosService, PrismaService, UsersMedalsService],
 })
-export class UsersVideosModule { }
+export class UsersVideosModule {}

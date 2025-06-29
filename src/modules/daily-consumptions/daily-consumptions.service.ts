@@ -15,7 +15,7 @@ export class DailyConsumptionsService {
     private readonly dateService: DateService,
     private readonly savingsService: SavingsService,
     private readonly automaticNotificationsService: AutomaticNotificationsService,
-  ) { }
+  ) {}
 
   async create(createDailyConsumptionDto: CreateDailyConsumptionDto): Promise<DailyConsumptionDto> {
     const user = await this.prisma.users.findUnique({
@@ -31,7 +31,9 @@ export class DailyConsumptionsService {
     });
 
     if (!device) {
-      throw new NotFoundException(`Device with ID ${createDailyConsumptionDto.device_id} not found`);
+      throw new NotFoundException(
+        `Device with ID ${createDailyConsumptionDto.device_id} not found`,
+      );
     }
 
     // Obtener la fecha actual de Perú (solo fecha, sin hora)
@@ -48,7 +50,7 @@ export class DailyConsumptionsService {
 
     if (existingRecord) {
       throw new ConflictException(
-        `A daily consumption record already exists for user ${createDailyConsumptionDto.user_id}, device ${createDailyConsumptionDto.device_id}, and date ${this.dateService.formatDateToString(dateOnly)}`
+        `A daily consumption record already exists for user ${createDailyConsumptionDto.user_id}, device ${createDailyConsumptionDto.device_id}, and date ${this.dateService.formatDateToString(dateOnly)}`,
       );
     }
 
@@ -107,7 +109,7 @@ export class DailyConsumptionsService {
       orderBy: { date: 'desc' },
     });
 
-    return dailyConsumptions.map(dc => ({
+    return dailyConsumptions.map((dc) => ({
       ...dc,
       date: dc.date.toISOString().split('T')[0],
     })) as DailyConsumptionDto[];
@@ -145,20 +147,22 @@ export class DailyConsumptionsService {
     const dailyConsumptions = await this.prisma.daily_consumptions.findMany({
       where: {
         user_id: userId,
-        is_active: true
+        is_active: true,
       },
       orderBy: { date: 'desc' },
     });
 
-    return dailyConsumptions.map(dc => plainToInstance(DailyConsumptionDto, {
-      id: dc.id,
-      user_id: dc.user_id,
-      device_id: dc.device_id,
-      date: dc.date.toISOString().split('T')[0],
-      hours_use: dc.hours_use,
-      estimated_consumption: dc.estimated_consumption,
-      is_active: dc.is_active,
-    }));
+    return dailyConsumptions.map((dc) =>
+      plainToInstance(DailyConsumptionDto, {
+        id: dc.id,
+        user_id: dc.user_id,
+        device_id: dc.device_id,
+        date: dc.date.toISOString().split('T')[0],
+        hours_use: dc.hours_use,
+        estimated_consumption: dc.estimated_consumption,
+        is_active: dc.is_active,
+      }),
+    );
   }
 
   async findByDevice(deviceId: string): Promise<DailyConsumptionDto[]> {
@@ -173,20 +177,22 @@ export class DailyConsumptionsService {
     const dailyConsumptions = await this.prisma.daily_consumptions.findMany({
       where: {
         device_id: deviceId,
-        is_active: true
+        is_active: true,
       },
       orderBy: { date: 'desc' },
     });
 
-    return dailyConsumptions.map(dc => plainToInstance(DailyConsumptionDto, {
-      id: dc.id,
-      user_id: dc.user_id,
-      device_id: dc.device_id,
-      date: dc.date.toISOString().split('T')[0],
-      hours_use: dc.hours_use,
-      estimated_consumption: dc.estimated_consumption,
-      is_active: dc.is_active,
-    }));
+    return dailyConsumptions.map((dc) =>
+      plainToInstance(DailyConsumptionDto, {
+        id: dc.id,
+        user_id: dc.user_id,
+        device_id: dc.device_id,
+        date: dc.date.toISOString().split('T')[0],
+        hours_use: dc.hours_use,
+        estimated_consumption: dc.estimated_consumption,
+        is_active: dc.is_active,
+      }),
+    );
   }
 
   async findByUserAndDevice(userId: string, deviceId: string): Promise<DailyConsumptionDto[]> {
@@ -210,20 +216,22 @@ export class DailyConsumptionsService {
       where: {
         user_id: userId,
         device_id: deviceId,
-        is_active: true
+        is_active: true,
       },
       orderBy: { date: 'desc' },
     });
 
-    return dailyConsumptions.map(dc => plainToInstance(DailyConsumptionDto, {
-      id: dc.id,
-      user_id: dc.user_id,
-      device_id: dc.device_id,
-      date: dc.date.toISOString().split('T')[0],
-      hours_use: dc.hours_use,
-      estimated_consumption: dc.estimated_consumption,
-      is_active: dc.is_active,
-    }));
+    return dailyConsumptions.map((dc) =>
+      plainToInstance(DailyConsumptionDto, {
+        id: dc.id,
+        user_id: dc.user_id,
+        device_id: dc.device_id,
+        date: dc.date.toISOString().split('T')[0],
+        hours_use: dc.hours_use,
+        estimated_consumption: dc.estimated_consumption,
+        is_active: dc.is_active,
+      }),
+    );
   }
 
   async findByUserAndDate(userId: string, date: string): Promise<DailyConsumptionDto[]> {
@@ -239,23 +247,28 @@ export class DailyConsumptionsService {
       where: {
         user_id: userId,
         date: new Date(date),
-        is_active: true
+        is_active: true,
       },
       orderBy: { date: 'desc' },
     });
 
-    return dailyConsumptions.map(dc => plainToInstance(DailyConsumptionDto, {
-      id: dc.id,
-      user_id: dc.user_id,
-      device_id: dc.device_id,
-      date: dc.date.toISOString().split('T')[0],
-      hours_use: dc.hours_use,
-      estimated_consumption: dc.estimated_consumption,
-      is_active: dc.is_active,
-    }));
+    return dailyConsumptions.map((dc) =>
+      plainToInstance(DailyConsumptionDto, {
+        id: dc.id,
+        user_id: dc.user_id,
+        device_id: dc.device_id,
+        date: dc.date.toISOString().split('T')[0],
+        hours_use: dc.hours_use,
+        estimated_consumption: dc.estimated_consumption,
+        is_active: dc.is_active,
+      }),
+    );
   }
 
-  async update(id: string, updateDailyConsumptionDto: UpdateDailyConsumptionDto): Promise<DailyConsumptionDto> {
+  async update(
+    id: string,
+    updateDailyConsumptionDto: UpdateDailyConsumptionDto,
+  ): Promise<DailyConsumptionDto> {
     const existingRecord = await this.prisma.daily_consumptions.findUnique({
       where: { id },
       include: { devices: true },
@@ -265,14 +278,15 @@ export class DailyConsumptionsService {
       throw new NotFoundException(`Daily consumption with ID ${id} not found`);
     }
 
-    const estimated_consumption = updateDailyConsumptionDto.hours_use * existingRecord.devices.consumption_kwh_h;
+    const estimated_consumption =
+      updateDailyConsumptionDto.hours_use * existingRecord.devices.consumption_kwh_h;
 
     const data = await this.prisma.daily_consumptions.update({
       where: { id },
       data: {
         estimated_consumption,
         hours_use: updateDailyConsumptionDto.hours_use,
-      }
+      },
     });
 
     // Recalcular automáticamente los ahorros para este usuario

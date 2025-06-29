@@ -1,14 +1,14 @@
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ChatBotMessageDto {
   @IsUUID()
   @ApiProperty({
     description: 'Unique identifier for the user',
-    example: '550e8400-e29b-41d4-a716-446655440001'
+    example: '550e8400-e29b-41d4-a716-446655440001',
   })
   user_id!: string;
-  
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

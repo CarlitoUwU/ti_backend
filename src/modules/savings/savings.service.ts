@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { CreateSavingDto } from './dto/create-saving.dto';
 import { SavingDto } from './dto/saving.dto';
@@ -13,7 +18,7 @@ export class SavingsService {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly dateService: DateService,
-  ) { }
+  ) {}
 
   async create(createSavingDto: CreateSavingDto): Promise<SavingDto> {
     // First, verify that user exists and get user with district
@@ -39,7 +44,7 @@ export class SavingsService {
 
     if (existingRecord) {
       throw new ConflictException(
-        `A saving record already exists for user ${createSavingDto.user_id}, month ${month}, and year ${currentYear}`
+        `A saving record already exists for user ${createSavingDto.user_id}, month ${month}, and year ${currentYear}`,
       );
     }
 
@@ -48,7 +53,7 @@ export class SavingsService {
       createSavingDto.user_id,
       month,
       currentYear,
-      user.district.fee_kwh
+      user.district.fee_kwh,
     );
 
     const saving = await this.prisma.savings.create({
@@ -73,7 +78,12 @@ export class SavingsService {
     });
   }
 
-  private async calculateSavings(userId: string, month: MonthEnum, year: number, feeKwh: number): Promise<{ savings_kwh: number; savings_sol: number }> {
+  private async calculateSavings(
+    userId: string,
+    month: MonthEnum,
+    year: number,
+    feeKwh: number,
+  ): Promise<{ savings_kwh: number; savings_sol: number }> {
     // Get the goal for this user, month, and year
     const goal = await this.prisma.goals.findFirst({
       where: {
@@ -86,7 +96,7 @@ export class SavingsService {
 
     if (!goal) {
       throw new BadRequestException(
-        `No active goal found for user ${userId}, month ${month}, and year ${year}. A goal is required to calculate savings.`
+        `No active goal found for user ${userId}, month ${month}, and year ${year}. A goal is required to calculate savings.`,
       );
     }
 
@@ -108,7 +118,7 @@ export class SavingsService {
     // Calculate total actual consumption in kWh
     const totalActualConsumption = dailyConsumptions.reduce(
       (sum, consumption) => sum + consumption.estimated_consumption,
-      0
+      0,
     );
 
     // Calculate savings: goal_kwh - actual_consumption
@@ -159,22 +169,23 @@ export class SavingsService {
     return monthMap[month];
   }
 
-
   async findAll(): Promise<SavingDto[]> {
     const savings = await this.prisma.savings.findMany({
       where: { is_active: true },
       orderBy: [{ year: 'desc' }, { month: 'asc' }],
     });
 
-    return savings.map(saving => plainToInstance(SavingDto, {
-      id: saving.id,
-      user_id: saving.user_id,
-      month: saving.month,
-      year: saving.year,
-      savings_kwh: saving.savings_kwh,
-      savings_sol: saving.savings_sol,
-      is_active: saving.is_active,
-    }));
+    return savings.map((saving) =>
+      plainToInstance(SavingDto, {
+        id: saving.id,
+        user_id: saving.user_id,
+        month: saving.month,
+        year: saving.year,
+        savings_kwh: saving.savings_kwh,
+        savings_sol: saving.savings_sol,
+        is_active: saving.is_active,
+      }),
+    );
   }
 
   async findOne(id: string): Promise<SavingDto> {
@@ -204,20 +215,22 @@ export class SavingsService {
     const savings = await this.prisma.savings.findMany({
       where: {
         user_id: userId,
-        is_active: true
+        is_active: true,
       },
       orderBy: [{ year: 'desc' }, { month: 'asc' }],
     });
 
-    return savings.map(saving => plainToInstance(SavingDto, {
-      id: saving.id,
-      user_id: saving.user_id,
-      month: saving.month,
-      year: saving.year,
-      savings_kwh: saving.savings_kwh,
-      savings_sol: saving.savings_sol,
-      is_active: saving.is_active,
-    }));
+    return savings.map((saving) =>
+      plainToInstance(SavingDto, {
+        id: saving.id,
+        user_id: saving.user_id,
+        month: saving.month,
+        year: saving.year,
+        savings_kwh: saving.savings_kwh,
+        savings_sol: saving.savings_sol,
+        is_active: saving.is_active,
+      }),
+    );
   }
 
   async findByUserAndPeriod(userId: string, month: MonthEnum, year: number): Promise<SavingDto[]> {
@@ -229,19 +242,21 @@ export class SavingsService {
         user_id: userId,
         month: month,
         year: year,
-        is_active: true
+        is_active: true,
       },
     });
 
-    return savings.map(saving => plainToInstance(SavingDto, {
-      id: saving.id,
-      user_id: saving.user_id,
-      month: saving.month,
-      year: saving.year,
-      savings_kwh: saving.savings_kwh,
-      savings_sol: saving.savings_sol,
-      is_active: saving.is_active,
-    }));
+    return savings.map((saving) =>
+      plainToInstance(SavingDto, {
+        id: saving.id,
+        user_id: saving.user_id,
+        month: saving.month,
+        year: saving.year,
+        savings_kwh: saving.savings_kwh,
+        savings_sol: saving.savings_sol,
+        is_active: saving.is_active,
+      }),
+    );
   }
 
   async update(id: string): Promise<SavingDto> {
@@ -266,7 +281,7 @@ export class SavingsService {
       existingSaving.user_id,
       existingSaving.month as MonthEnum,
       existingSaving.year,
-      user.district.fee_kwh
+      user.district.fee_kwh,
     );
 
     const saving = await this.prisma.savings.update({
@@ -393,7 +408,9 @@ export class SavingsService {
       });
 
       if (!goal) {
-        console.warn(`No active goal found for user ${userId}, month ${month}, and year ${currentYear}. Cannot calculate savings.`);
+        console.warn(
+          `No active goal found for user ${userId}, month ${month}, and year ${currentYear}. Cannot calculate savings.`,
+        );
         return;
       }
 
@@ -411,7 +428,7 @@ export class SavingsService {
         userId,
         month,
         currentYear,
-        user.district.fee_kwh
+        user.district.fee_kwh,
       );
 
       if (existingSaving) {

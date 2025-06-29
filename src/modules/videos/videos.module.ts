@@ -7,4 +7,4 @@ import { PrismaService } from 'src/prisma.service';
   controllers: [VideosController],
   providers: [VideosService, PrismaService],
 })
-export class VideosModule { }
+export class VideosModule {}

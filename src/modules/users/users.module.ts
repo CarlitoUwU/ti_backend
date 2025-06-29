@@ -9,6 +9,6 @@ import { MailsModule } from '../mails/mails.module';
   imports: [MailsModule],
   exports: [UsersService],
   controllers: [UsersController],
-  providers: [UsersService, UserProfilesService, PrismaService,],
+  providers: [UsersService, UserProfilesService, PrismaService],
 })
-export class UsersModule { }
+export class UsersModule {}

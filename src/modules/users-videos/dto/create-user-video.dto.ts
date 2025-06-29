@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateUserVideoDto {
   @IsUUID()
-  @ApiProperty({ description: 'User ID who watched the video', example: '550e8400-e29b-41d4-a716-446655440001' })
+  @ApiProperty({
+    description: 'User ID who watched the video',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
   user_id!: string;
 
   @IsInt()

@@ -8,4 +8,4 @@ import { RedisModule } from './redis/redis.module';
   providers: [DateService],
   exports: [DateService, RedisModule],
 })
-export class CommonModule { }
+export class CommonModule {}

@@ -6,8 +6,7 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class MedalsService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createMedalDto: CreateMedalDto): Promise<MedalBaseDto> {
     const data = await this.prisma.medals.create({
@@ -21,7 +20,7 @@ export class MedalsService {
         name: true,
         description: true,
         url_img: true,
-      }
+      },
     });
 
     const medal: MedalBaseDto = {
@@ -30,9 +29,9 @@ export class MedalsService {
       description: data.description,
       url_img: data.url_img,
       is_active: true,
-    }
+    };
 
-    return plainToInstance(MedalBaseDto, medal)
+    return plainToInstance(MedalBaseDto, medal);
   }
 
   async findAll() {
@@ -43,10 +42,10 @@ export class MedalsService {
         description: true,
         url_img: true,
         is_active: true,
-      }
+      },
     });
 
-    const medals: MedalBaseDto[] = data.map(medal => ({
+    const medals: MedalBaseDto[] = data.map((medal) => ({
       id: medal.id,
       name: medal.name,
       description: medal.description,
@@ -66,7 +65,7 @@ export class MedalsService {
         description: true,
         url_img: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -97,7 +96,7 @@ export class MedalsService {
         description: true,
         url_img: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(MedalBaseDto, {
@@ -124,7 +123,7 @@ export class MedalsService {
         description: true,
         url_img: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(MedalBaseDto, {
@@ -150,7 +149,7 @@ export class MedalsService {
         description: true,
         url_img: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(MedalBaseDto, {

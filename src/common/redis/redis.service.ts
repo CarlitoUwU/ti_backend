@@ -3,7 +3,7 @@ import { Redis } from 'ioredis';
 
 @Injectable()
 export class RedisService {
-  constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) { }
+  constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
 
   /**
    * Generar y guardar código de reseteo de contraseña
@@ -55,7 +55,9 @@ export class RedisService {
     const isVerified = await this.redis.get(verifiedKey);
 
     const hasVerified = !!isVerified;
-    console.log(`${hasVerified ? '✅' : '❌'} Reset verification status for ${email}: ${hasVerified}`);
+    console.log(
+      `${hasVerified ? '✅' : '❌'} Reset verification status for ${email}: ${hasVerified}`,
+    );
 
     return hasVerified;
   }

@@ -7,8 +7,7 @@ import { VideoBaseDto } from './dto';
 
 @Controller('videos')
 export class VideosController {
-
-  constructor(private readonly videosService: VideosService) { }
+  constructor(private readonly videosService: VideosService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new video' })

@@ -7,8 +7,7 @@ import { DeviceBaseDto } from './dto';
 
 @Controller('devices')
 export class DevicesController {
-
-  constructor(private readonly devicesService: DevicesService) { }
+  constructor(private readonly devicesService: DevicesService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new device' })

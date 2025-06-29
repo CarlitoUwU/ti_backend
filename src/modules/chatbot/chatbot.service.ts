@@ -8,13 +8,13 @@ const conversationContexts = new Map<string, any>();
 
 @Injectable()
 export class ChatbotService {
-  constructor(private readonly httpService: HttpService) { }
+  constructor(private readonly httpService: HttpService) {}
 
   async respondToMessage(chatbotMessage: ChatBotMessageDto): Promise<any> {
     console.log('recibido a las:', new Date().toISOString());
 
     // Mensaje inicial del sistema si es la primera vez
-  const systemPrompt = `Eres un asistente experto en ahorro de energía eléctrica en hogares del Perú.Respondes SIEMPRE en español. Piensas, razonas y respondes en español, sin usar otros idiomas.No pienses mucho y responde rápido.Tus respuestas deben ser prácticas, claras, breves y útiles para familias peruanas sin conocimientos técnicos. Adapta siempre tu lenguaje al estilo de vida local. Evita tecnicismos y explicaciones extensas.Si el usuario pregunta algo que no tenga relación con el ahorro de energía, redirige cortésmente la conversación hacia ese tema.Recuerda responder rápidamente, como si fueras un experto en ahorro de energía, y no te extiendas demasiado en tus respuestas.`;
+    const systemPrompt = `Eres un asistente experto en ahorro de energía eléctrica en hogares del Perú.Respondes SIEMPRE en español. Piensas, razonas y respondes en español, sin usar otros idiomas.No pienses mucho y responde rápido.Tus respuestas deben ser prácticas, claras, breves y útiles para familias peruanas sin conocimientos técnicos. Adapta siempre tu lenguaje al estilo de vida local. Evita tecnicismos y explicaciones extensas.Si el usuario pregunta algo que no tenga relación con el ahorro de energía, redirige cortésmente la conversación hacia ese tema.Recuerda responder rápidamente, como si fueras un experto en ahorro de energía, y no te extiendas demasiado en tus respuestas.`;
 
     // Obtener contexto previo (si existe)
     const previousContext = conversationContexts.get(chatbotMessage.user_id);
@@ -24,18 +24,20 @@ export class ChatbotService {
         'http://localhost:11434/api/generate',
         {
           model: 'deepseek-r1:8b',
-          prompt: previousContext ? chatbotMessage.message : `${systemPrompt}\nUsuario: ${chatbotMessage.message}`,
+          prompt: previousContext
+            ? chatbotMessage.message
+            : `${systemPrompt}\nUsuario: ${chatbotMessage.message}`,
           stream: false,
           context: previousContext ?? undefined,
           options: {
             temperature: 0.7,
-          }
+          },
         },
         {
           headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+            'Content-Type': 'application/json',
+          },
+        },
       );
 
       console.log('recibiendo respuesta del chatbot a las:', new Date().toISOString());
@@ -53,7 +55,7 @@ export class ChatbotService {
       console.log('listo para enviar respuesta a las:', new Date().toISOString());
 
       return {
-        text: cleanResponse
+        text: cleanResponse,
       };
     } catch (error) {
       console.error('Error comunicándose con el chatbot:', error.message);

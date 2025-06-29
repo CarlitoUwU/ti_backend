@@ -11,4 +11,4 @@ import { NotificationsModule } from '../notifications/notifications.module';
   providers: [DailyConsumptionsService, PrismaService],
   exports: [DailyConsumptionsService],
 })
-export class DailyConsumptionsModule { }
+export class DailyConsumptionsModule {}

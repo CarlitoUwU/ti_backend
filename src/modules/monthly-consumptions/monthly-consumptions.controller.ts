@@ -9,12 +9,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { MonthlyConsumptionsService } from './monthly-consumptions.service';
 import { CreateMonthlyConsumptionDto } from './dto/create-monthly-consumption.dto';
 import { UpdateMonthlyConsumptionDto } from './dto/update-monthly-consumption.dto';
@@ -23,12 +18,13 @@ import { MonthlyConsumptionDto } from './dto/monthly-consumption.dto';
 @ApiTags('monthly-consumptions')
 @Controller('monthly-consumptions')
 export class MonthlyConsumptionsController {
-  constructor(private readonly monthlyConsumptionsService: MonthlyConsumptionsService) { }
+  constructor(private readonly monthlyConsumptionsService: MonthlyConsumptionsService) {}
 
   @Post()
   @ApiOperation({
     summary: 'Create a new monthly consumption record',
-    description: 'Creates a monthly consumption record. User provides kwh_total, kwh_cost, and amount_paid. Month and year are auto-calculated from current date using Peru timezone. Only one record per user per month is allowed.'
+    description:
+      'Creates a monthly consumption record. User provides kwh_total, kwh_cost, and amount_paid. Month and year are auto-calculated from current date using Peru timezone. Only one record per user per month is allowed.',
   })
   @ApiResponse({
     status: 201,
@@ -37,8 +33,13 @@ export class MonthlyConsumptionsController {
   })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @ApiResponse({ status: 409, description: 'Monthly consumption record already exists for this user and current month' })
-  async create(@Body() createMonthlyConsumptionDto: CreateMonthlyConsumptionDto): Promise<MonthlyConsumptionDto> {
+  @ApiResponse({
+    status: 409,
+    description: 'Monthly consumption record already exists for this user and current month',
+  })
+  async create(
+    @Body() createMonthlyConsumptionDto: CreateMonthlyConsumptionDto,
+  ): Promise<MonthlyConsumptionDto> {
     return this.monthlyConsumptionsService.create(createMonthlyConsumptionDto);
   }
 
@@ -90,7 +91,8 @@ export class MonthlyConsumptionsController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Update a monthly consumption record',
-    description: 'Updates an existing monthly consumption record. Can update kwh_total, kwh_cost, amount_paid, or is_active status. Month and year cannot be changed.'
+    description:
+      'Updates an existing monthly consumption record. Can update kwh_total, kwh_cost, amount_paid, or is_active status. Month and year cannot be changed.',
   })
   @ApiParam({
     name: 'id',
@@ -115,7 +117,7 @@ export class MonthlyConsumptionsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Delete a monthly consumption record',
-    description: 'Soft deletes a monthly consumption record by setting is_active to false'
+    description: 'Soft deletes a monthly consumption record by setting is_active to false',
   })
   @ApiParam({
     name: 'id',
@@ -130,10 +132,10 @@ export class MonthlyConsumptionsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Monthly consumption record has been successfully deleted'
-        }
-      }
-    }
+          example: 'Monthly consumption record has been successfully deleted',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 404, description: 'Monthly consumption record not found' })
   async remove(@Param('id') id: string): Promise<{ message: string }> {

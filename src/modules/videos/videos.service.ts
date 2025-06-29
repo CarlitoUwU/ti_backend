@@ -6,8 +6,7 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class VideosService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createVideoDto: CreateVideoDto): Promise<VideoBaseDto> {
     const data = await this.prisma.videos.create({
@@ -21,7 +20,7 @@ export class VideosService {
         title: true,
         url: true,
         duration_seg: true,
-      }
+      },
     });
 
     const video: VideoBaseDto = {
@@ -30,9 +29,9 @@ export class VideosService {
       url: data.url,
       duration_seg: data.duration_seg,
       is_active: true,
-    }
+    };
 
-    return plainToInstance(VideoBaseDto, video)
+    return plainToInstance(VideoBaseDto, video);
   }
 
   async findAll() {
@@ -43,10 +42,10 @@ export class VideosService {
         url: true,
         duration_seg: true,
         is_active: true,
-      }
+      },
     });
 
-    const videos: VideoBaseDto[] = data.map(video => ({
+    const videos: VideoBaseDto[] = data.map((video) => ({
       id: video.id,
       title: video.title,
       url: video.url,
@@ -66,7 +65,7 @@ export class VideosService {
         url: true,
         duration_seg: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
@@ -97,7 +96,7 @@ export class VideosService {
         url: true,
         duration_seg: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(VideoBaseDto, {
@@ -124,7 +123,7 @@ export class VideosService {
         url: true,
         duration_seg: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(VideoBaseDto, {
@@ -150,7 +149,7 @@ export class VideosService {
         url: true,
         duration_seg: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(VideoBaseDto, {

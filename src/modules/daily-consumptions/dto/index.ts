@@ -1,4 +1,7 @@
-import { OmitType } from "@nestjs/swagger";
-import { DailyConsumptionDto } from "./daily-consumption.dto";
+import { OmitType } from '@nestjs/swagger';
+import { DailyConsumptionDto } from './daily-consumption.dto';
 
-export class DailyConsumptionBaseDto extends OmitType(DailyConsumptionDto, ['id', 'estimated_consumption']) { }
+export class DailyConsumptionBaseDto extends OmitType(DailyConsumptionDto, [
+  'id',
+  'estimated_consumption',
+]) {}

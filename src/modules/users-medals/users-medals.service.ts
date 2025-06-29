@@ -7,16 +7,15 @@ import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class UsersMedalsService {
-
   constructor(
     private prisma: PrismaService,
     private dateService: DateService,
-  ) { }
+  ) {}
 
   async create(createUserMedalDto: CreateUserMedalDto): Promise<UserMedalBaseDto> {
     // Verificar que el usuario existe
     const userExists = await this.prisma.users.findUnique({
-      where: { id: createUserMedalDto.user_id }
+      where: { id: createUserMedalDto.user_id },
     });
 
     if (!userExists) {
@@ -25,7 +24,7 @@ export class UsersMedalsService {
 
     // Verificar que la medalla existe
     const medalExists = await this.prisma.medals.findUnique({
-      where: { id: createUserMedalDto.melda_id }
+      where: { id: createUserMedalDto.melda_id },
     });
 
     if (!medalExists) {
@@ -37,15 +36,15 @@ export class UsersMedalsService {
       where: {
         user_id_melda_id: {
           user_id: createUserMedalDto.user_id,
-          melda_id: createUserMedalDto.melda_id
-        }
+          melda_id: createUserMedalDto.melda_id,
+        },
       },
       select: {
         user_id: true,
         melda_id: true,
         achievement_date: true,
         is_active: true,
-      }
+      },
     });
 
     if (existingRelation) {
@@ -71,7 +70,7 @@ export class UsersMedalsService {
         melda_id: true,
         achievement_date: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserMedalBaseDto, {
@@ -91,11 +90,11 @@ export class UsersMedalsService {
         is_active: true,
       },
       orderBy: {
-        achievement_date: 'desc'
-      }
+        achievement_date: 'desc',
+      },
     });
 
-    const userMedals: UserMedalBaseDto[] = data.map(userMedal => ({
+    const userMedals: UserMedalBaseDto[] = data.map((userMedal) => ({
       user_id: userMedal.user_id,
       melda_id: userMedal.melda_id,
       achievement_date: userMedal.achievement_date,
@@ -108,7 +107,7 @@ export class UsersMedalsService {
   async findByUserId(user_id: string) {
     // Verificar que el usuario existe
     const userExists = await this.prisma.users.findUnique({
-      where: { id: user_id }
+      where: { id: user_id },
     });
 
     if (!userExists) {
@@ -124,11 +123,11 @@ export class UsersMedalsService {
         is_active: true,
       },
       orderBy: {
-        achievement_date: 'desc'
-      }
+        achievement_date: 'desc',
+      },
     });
 
-    const userMedals: UserMedalBaseDto[] = data.map(userMedal => ({
+    const userMedals: UserMedalBaseDto[] = data.map((userMedal) => ({
       user_id: userMedal.user_id,
       melda_id: userMedal.melda_id,
       achievement_date: userMedal.achievement_date,
@@ -141,7 +140,7 @@ export class UsersMedalsService {
   async findByMedalId(melda_id: number) {
     // Verificar que la medalla existe
     const medalExists = await this.prisma.medals.findUnique({
-      where: { id: melda_id }
+      where: { id: melda_id },
     });
 
     if (!medalExists) {
@@ -157,11 +156,11 @@ export class UsersMedalsService {
         is_active: true,
       },
       orderBy: {
-        achievement_date: 'desc'
-      }
+        achievement_date: 'desc',
+      },
     });
 
-    const userMedals: UserMedalBaseDto[] = data.map(userMedal => ({
+    const userMedals: UserMedalBaseDto[] = data.map((userMedal) => ({
       user_id: userMedal.user_id,
       melda_id: userMedal.melda_id,
       achievement_date: userMedal.achievement_date,
@@ -176,19 +175,21 @@ export class UsersMedalsService {
       where: {
         user_id_melda_id: {
           user_id,
-          melda_id
-        }
+          melda_id,
+        },
       },
       select: {
         user_id: true,
         melda_id: true,
         achievement_date: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
-      throw new NotFoundException(`User-Medal relationship not found for user ${user_id} and medal ${melda_id}`);
+      throw new NotFoundException(
+        `User-Medal relationship not found for user ${user_id} and medal ${melda_id}`,
+      );
     }
 
     return plainToInstance(UserMedalBaseDto, {
@@ -204,21 +205,23 @@ export class UsersMedalsService {
       where: {
         user_id_melda_id: {
           user_id,
-          melda_id
-        }
-      }
+          melda_id,
+        },
+      },
     });
 
     if (!existingRelation) {
-      throw new NotFoundException(`User-Medal relationship not found for user ${user_id} and medal ${melda_id}`);
+      throw new NotFoundException(
+        `User-Medal relationship not found for user ${user_id} and medal ${melda_id}`,
+      );
     }
 
     const data = await this.prisma.users_medals.update({
       where: {
         user_id_melda_id: {
           user_id,
-          melda_id
-        }
+          melda_id,
+        },
       },
       data: { is_active: true },
       select: {
@@ -226,7 +229,7 @@ export class UsersMedalsService {
         melda_id: true,
         achievement_date: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserMedalBaseDto, {
@@ -242,21 +245,23 @@ export class UsersMedalsService {
       where: {
         user_id_melda_id: {
           user_id,
-          melda_id
-        }
-      }
+          melda_id,
+        },
+      },
     });
 
     if (!existingRelation) {
-      throw new NotFoundException(`User-Medal relationship not found for user ${user_id} and medal ${melda_id}`);
+      throw new NotFoundException(
+        `User-Medal relationship not found for user ${user_id} and medal ${melda_id}`,
+      );
     }
 
     const data = await this.prisma.users_medals.update({
       where: {
         user_id_melda_id: {
           user_id,
-          melda_id
-        }
+          melda_id,
+        },
       },
       data: { is_active: false },
       select: {
@@ -264,7 +269,7 @@ export class UsersMedalsService {
         melda_id: true,
         achievement_date: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserMedalBaseDto, {
@@ -280,28 +285,30 @@ export class UsersMedalsService {
       where: {
         user_id_melda_id: {
           user_id,
-          melda_id
-        }
-      }
+          melda_id,
+        },
+      },
     });
 
     if (!existingRelation) {
-      throw new NotFoundException(`User-Medal relationship not found for user ${user_id} and medal ${melda_id}`);
+      throw new NotFoundException(
+        `User-Medal relationship not found for user ${user_id} and medal ${melda_id}`,
+      );
     }
 
     const data = await this.prisma.users_medals.delete({
       where: {
         user_id_melda_id: {
           user_id,
-          melda_id
-        }
+          melda_id,
+        },
       },
       select: {
         user_id: true,
         melda_id: true,
         achievement_date: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserMedalBaseDto, {

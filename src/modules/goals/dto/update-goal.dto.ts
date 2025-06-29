@@ -1,16 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsNumber,
-  IsOptional,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsUUID } from 'class-validator';
 import { GoalBaseDto } from '.';
 import { MonthEnum } from './month.enum';
 
-export class ActivateGoalDto extends (GoalBaseDto) {
+export class ActivateGoalDto extends GoalBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the goal is active',
@@ -20,7 +13,7 @@ export class ActivateGoalDto extends (GoalBaseDto) {
   is_active: boolean = true;
 }
 
-export class DesactivateGoalDto extends (GoalBaseDto) {
+export class DesactivateGoalDto extends GoalBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the goal is active',
@@ -48,7 +41,11 @@ export class UpdateGoalDto {
 
   @IsOptional()
   @IsNumber()
-  @ApiProperty({ description: 'Goal consumption in kilowatt-hours', example: 175.0, required: false })
+  @ApiProperty({
+    description: 'Goal consumption in kilowatt-hours',
+    example: 175.0,
+    required: false,
+  })
   goal_kwh?: number;
 
   @IsOptional()

@@ -14,7 +14,7 @@ export class GoalsService {
     private readonly prisma: PrismaService,
     private readonly dateService: DateService,
     private readonly automaticNotificationsService: AutomaticNotificationsService,
-  ) { }
+  ) {}
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
     // First, get the user's district to calculate goal_kwh
@@ -47,7 +47,9 @@ export class GoalsService {
     });
 
     if (existingGoal) {
-      throw new ConflictException(`Goal already exists for user ${createGoalDto.user_id} for the month ${currentMonth} and year ${currentYear}`);
+      throw new ConflictException(
+        `Goal already exists for user ${createGoalDto.user_id} for the month ${currentMonth} and year ${currentYear}`,
+      );
     }
 
     // Calculate goal_kwh based on estimated_cost / district's fee_kwh
@@ -68,7 +70,10 @@ export class GoalsService {
     try {
       await this.automaticNotificationsService.runAllChecksForUser(createGoalDto.user_id);
     } catch (error) {
-      console.error(`Error running automatic notifications for user ${createGoalDto.user_id}:`, error.message);
+      console.error(
+        `Error running automatic notifications for user ${createGoalDto.user_id}:`,
+        error.message,
+      );
     }
 
     return plainToInstance(GoalDto, {
@@ -106,15 +111,17 @@ export class GoalsService {
       orderBy: [{ year: 'desc' }, { month: 'asc' }],
     });
 
-    return goals.map(goal => plainToInstance(GoalDto, {
-      id: goal.id,
-      user_id: goal.user_id,
-      month: goal.month,
-      year: goal.year,
-      goal_kwh: goal.goal_kwh,
-      estimated_cost: goal.estimated_cost,
-      is_active: goal.is_active,
-    }));
+    return goals.map((goal) =>
+      plainToInstance(GoalDto, {
+        id: goal.id,
+        user_id: goal.user_id,
+        month: goal.month,
+        year: goal.year,
+        goal_kwh: goal.goal_kwh,
+        estimated_cost: goal.estimated_cost,
+        is_active: goal.is_active,
+      }),
+    );
   }
 
   async findOne(id: string): Promise<GoalDto> {
@@ -149,20 +156,22 @@ export class GoalsService {
     const goals = await this.prisma.goals.findMany({
       where: {
         user_id: userId,
-        is_active: true
+        is_active: true,
       },
       orderBy: [{ year: 'desc' }, { month: 'asc' }],
     });
 
-    return goals.map(goal => plainToInstance(GoalDto, {
-      id: goal.id,
-      user_id: goal.user_id,
-      month: goal.month,
-      year: goal.year,
-      goal_kwh: goal.goal_kwh,
-      estimated_cost: goal.estimated_cost,
-      is_active: goal.is_active,
-    }));
+    return goals.map((goal) =>
+      plainToInstance(GoalDto, {
+        id: goal.id,
+        user_id: goal.user_id,
+        month: goal.month,
+        year: goal.year,
+        goal_kwh: goal.goal_kwh,
+        estimated_cost: goal.estimated_cost,
+        is_active: goal.is_active,
+      }),
+    );
   }
 
   async findByUserAndPeriod(userId: string, month: string, year: number): Promise<GoalDto[]> {
@@ -179,19 +188,21 @@ export class GoalsService {
         user_id: userId,
         month: month as any,
         year: year,
-        is_active: true
+        is_active: true,
       },
     });
 
-    return goals.map(goal => plainToInstance(GoalDto, {
-      id: goal.id,
-      user_id: goal.user_id,
-      month: goal.month,
-      year: goal.year,
-      goal_kwh: goal.goal_kwh,
-      estimated_cost: goal.estimated_cost,
-      is_active: goal.is_active,
-    }));
+    return goals.map((goal) =>
+      plainToInstance(GoalDto, {
+        id: goal.id,
+        user_id: goal.user_id,
+        month: goal.month,
+        year: goal.year,
+        goal_kwh: goal.goal_kwh,
+        estimated_cost: goal.estimated_cost,
+        is_active: goal.is_active,
+      }),
+    );
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
@@ -225,7 +236,10 @@ export class GoalsService {
     try {
       await this.automaticNotificationsService.runAllChecksForUser(existingGoal.user_id);
     } catch (error) {
-      console.error(`Error running automatic notifications for user ${existingGoal.user_id}:`, error.message);
+      console.error(
+        `Error running automatic notifications for user ${existingGoal.user_id}:`,
+        error.message,
+      );
     }
 
     return plainToInstance(GoalDto, {

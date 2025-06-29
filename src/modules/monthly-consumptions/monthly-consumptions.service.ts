@@ -14,9 +14,11 @@ export class MonthlyConsumptionsService {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly dateService: DateService,
-  ) { }
+  ) {}
 
-  async create(createMonthlyConsumptionDto: CreateMonthlyConsumptionDto): Promise<MonthlyConsumptionDto> {
+  async create(
+    createMonthlyConsumptionDto: CreateMonthlyConsumptionDto,
+  ): Promise<MonthlyConsumptionDto> {
     // Verify that user exists
     await this.usersService.findOne(createMonthlyConsumptionDto.user_id);
 
@@ -37,7 +39,7 @@ export class MonthlyConsumptionsService {
 
     if (existingRecord) {
       throw new ConflictException(
-        `A monthly consumption record already exists for user ${createMonthlyConsumptionDto.user_id} for ${currentMonth} ${currentYear}`
+        `A monthly consumption record already exists for user ${createMonthlyConsumptionDto.user_id} for ${currentMonth} ${currentYear}`,
       );
     }
 
@@ -85,7 +87,7 @@ export class MonthlyConsumptionsService {
       orderBy: [{ year: 'desc' }, { month: 'desc' }],
     });
 
-    return monthlyConsumptions.map(mc => plainToInstance(MonthlyConsumptionDto, mc));
+    return monthlyConsumptions.map((mc) => plainToInstance(MonthlyConsumptionDto, mc));
   }
 
   async findOne(id: string): Promise<MonthlyConsumptionDto> {
@@ -112,10 +114,13 @@ export class MonthlyConsumptionsService {
       orderBy: [{ year: 'desc' }, { month: 'desc' }],
     });
 
-    return monthlyConsumptions.map(mc => plainToInstance(MonthlyConsumptionDto, mc));
+    return monthlyConsumptions.map((mc) => plainToInstance(MonthlyConsumptionDto, mc));
   }
 
-  async update(id: string, updateMonthlyConsumptionDto: UpdateMonthlyConsumptionDto): Promise<MonthlyConsumptionDto> {
+  async update(
+    id: string,
+    updateMonthlyConsumptionDto: UpdateMonthlyConsumptionDto,
+  ): Promise<MonthlyConsumptionDto> {
     // Check if the record exists
     const existingRecord = await this.prisma.monthly_consumptions.findUnique({
       where: { id },

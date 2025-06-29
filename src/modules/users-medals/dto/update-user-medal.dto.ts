@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-} from 'class-validator';
+import { IsBoolean } from 'class-validator';
 import { UserMedalBaseDto } from '.';
 
-export class ActivateUserMedalDto extends (UserMedalBaseDto) {
+export class ActivateUserMedalDto extends UserMedalBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the user-medal relationship is active',
@@ -14,7 +12,7 @@ export class ActivateUserMedalDto extends (UserMedalBaseDto) {
   is_active: boolean = true;
 }
 
-export class DesactivateUserMedalDto extends (UserMedalBaseDto) {
+export class DesactivateUserMedalDto extends UserMedalBaseDto {
   @IsBoolean()
   @ApiProperty({
     description: 'Whether the user-medal relationship is active',

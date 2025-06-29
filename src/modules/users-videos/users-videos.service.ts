@@ -8,7 +8,6 @@ import { DateService } from '../../common/services/date.service';
 
 @Injectable()
 export class UsersVideosService {
-
   private id_medal_bronce: number = 1;
   private id_medal_plata: number = 2;
   private id_medal_oro: number = 3;
@@ -17,12 +16,12 @@ export class UsersVideosService {
     private prisma: PrismaService,
     private usersMedalsService: UsersMedalsService,
     private dateService: DateService,
-  ) { }
+  ) {}
 
   async create(createUserVideoDto: CreateUserVideoDto): Promise<UserVideoBaseDto> {
     // Verificar que el usuario existe
     const userExists = await this.prisma.users.findUnique({
-      where: { id: createUserVideoDto.user_id }
+      where: { id: createUserVideoDto.user_id },
     });
 
     if (!userExists) {
@@ -31,7 +30,7 @@ export class UsersVideosService {
 
     // Verificar que el video existe
     const videoExists = await this.prisma.videos.findUnique({
-      where: { id: createUserVideoDto.video_id }
+      where: { id: createUserVideoDto.video_id },
     });
 
     if (!videoExists) {
@@ -43,15 +42,15 @@ export class UsersVideosService {
       where: {
         user_id_video_id: {
           user_id: createUserVideoDto.user_id,
-          video_id: createUserVideoDto.video_id
-        }
+          video_id: createUserVideoDto.video_id,
+        },
       },
       select: {
         user_id: true,
         video_id: true,
         date_seen: true,
         is_active: true,
-      }
+      },
     });
 
     if (existingRelation) {
@@ -75,7 +74,7 @@ export class UsersVideosService {
         video_id: true,
         date_seen: true,
         is_active: true,
-      }
+      },
     });
 
     // Asignar medallas si corresponde
@@ -83,17 +82,17 @@ export class UsersVideosService {
     if (count === 1) {
       await this.usersMedalsService.create({
         user_id: createUserVideoDto.user_id,
-        melda_id: this.id_medal_bronce
+        melda_id: this.id_medal_bronce,
       });
     } else if (count === 10) {
       await this.usersMedalsService.create({
         user_id: createUserVideoDto.user_id,
-        melda_id: this.id_medal_plata
+        melda_id: this.id_medal_plata,
       });
     } else if (count === 25) {
       await this.usersMedalsService.create({
         user_id: createUserVideoDto.user_id,
-        melda_id: this.id_medal_oro
+        melda_id: this.id_medal_oro,
       });
     }
 
@@ -114,11 +113,11 @@ export class UsersVideosService {
         is_active: true,
       },
       orderBy: {
-        date_seen: 'desc'
-      }
+        date_seen: 'desc',
+      },
     });
 
-    const userVideos: UserVideoBaseDto[] = data.map(userVideo => ({
+    const userVideos: UserVideoBaseDto[] = data.map((userVideo) => ({
       user_id: userVideo.user_id,
       video_id: userVideo.video_id,
       date_seen: userVideo.date_seen,
@@ -131,7 +130,7 @@ export class UsersVideosService {
   async findByUserId(user_id: string) {
     // Verificar que el usuario existe
     const userExists = await this.prisma.users.findUnique({
-      where: { id: user_id }
+      where: { id: user_id },
     });
 
     if (!userExists) {
@@ -147,11 +146,11 @@ export class UsersVideosService {
         is_active: true,
       },
       orderBy: {
-        date_seen: 'desc'
-      }
+        date_seen: 'desc',
+      },
     });
 
-    const userVideos: UserVideoBaseDto[] = data.map(userVideo => ({
+    const userVideos: UserVideoBaseDto[] = data.map((userVideo) => ({
       user_id: userVideo.user_id,
       video_id: userVideo.video_id,
       date_seen: userVideo.date_seen,
@@ -164,7 +163,7 @@ export class UsersVideosService {
   async findByVideoId(video_id: number) {
     // Verificar que el video existe
     const videoExists = await this.prisma.videos.findUnique({
-      where: { id: video_id }
+      where: { id: video_id },
     });
 
     if (!videoExists) {
@@ -180,11 +179,11 @@ export class UsersVideosService {
         is_active: true,
       },
       orderBy: {
-        date_seen: 'desc'
-      }
+        date_seen: 'desc',
+      },
     });
 
-    const userVideos: UserVideoBaseDto[] = data.map(userVideo => ({
+    const userVideos: UserVideoBaseDto[] = data.map((userVideo) => ({
       user_id: userVideo.user_id,
       video_id: userVideo.video_id,
       date_seen: userVideo.date_seen,
@@ -199,19 +198,21 @@ export class UsersVideosService {
       where: {
         user_id_video_id: {
           user_id,
-          video_id
-        }
+          video_id,
+        },
       },
       select: {
         user_id: true,
         video_id: true,
         date_seen: true,
         is_active: true,
-      }
+      },
     });
 
     if (!data) {
-      throw new NotFoundException(`User-Video relationship not found for user ${user_id} and video ${video_id}`);
+      throw new NotFoundException(
+        `User-Video relationship not found for user ${user_id} and video ${video_id}`,
+      );
     }
 
     return plainToInstance(UserVideoBaseDto, {
@@ -227,21 +228,23 @@ export class UsersVideosService {
       where: {
         user_id_video_id: {
           user_id,
-          video_id
-        }
-      }
+          video_id,
+        },
+      },
     });
 
     if (!existingRelation) {
-      throw new NotFoundException(`User-Video relationship not found for user ${user_id} and video ${video_id}`);
+      throw new NotFoundException(
+        `User-Video relationship not found for user ${user_id} and video ${video_id}`,
+      );
     }
 
     const data = await this.prisma.users_videos.update({
       where: {
         user_id_video_id: {
           user_id,
-          video_id
-        }
+          video_id,
+        },
       },
       data: { is_active: true },
       select: {
@@ -249,7 +252,7 @@ export class UsersVideosService {
         video_id: true,
         date_seen: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserVideoBaseDto, {
@@ -265,21 +268,23 @@ export class UsersVideosService {
       where: {
         user_id_video_id: {
           user_id,
-          video_id
-        }
-      }
+          video_id,
+        },
+      },
     });
 
     if (!existingRelation) {
-      throw new NotFoundException(`User-Video relationship not found for user ${user_id} and video ${video_id}`);
+      throw new NotFoundException(
+        `User-Video relationship not found for user ${user_id} and video ${video_id}`,
+      );
     }
 
     const data = await this.prisma.users_videos.update({
       where: {
         user_id_video_id: {
           user_id,
-          video_id
-        }
+          video_id,
+        },
       },
       data: { is_active: false },
       select: {
@@ -287,7 +292,7 @@ export class UsersVideosService {
         video_id: true,
         date_seen: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserVideoBaseDto, {
@@ -303,28 +308,30 @@ export class UsersVideosService {
       where: {
         user_id_video_id: {
           user_id,
-          video_id
-        }
-      }
+          video_id,
+        },
+      },
     });
 
     if (!existingRelation) {
-      throw new NotFoundException(`User-Video relationship not found for user ${user_id} and video ${video_id}`);
+      throw new NotFoundException(
+        `User-Video relationship not found for user ${user_id} and video ${video_id}`,
+      );
     }
 
     const data = await this.prisma.users_videos.delete({
       where: {
         user_id_video_id: {
           user_id,
-          video_id
-        }
+          video_id,
+        },
       },
       select: {
         user_id: true,
         video_id: true,
         date_seen: true,
         is_active: true,
-      }
+      },
     });
 
     return plainToInstance(UserVideoBaseDto, {
@@ -338,7 +345,7 @@ export class UsersVideosService {
   async countByUserId(user_id: string): Promise<number> {
     // Verificar que el usuario existe
     const userExists = await this.prisma.users.findUnique({
-      where: { id: user_id }
+      where: { id: user_id },
     });
 
     if (!userExists) {
@@ -346,7 +353,7 @@ export class UsersVideosService {
     }
 
     const count = await this.prisma.users_videos.count({
-      where: { user_id, is_active: true }
+      where: { user_id, is_active: true },
     });
 
     return count;
