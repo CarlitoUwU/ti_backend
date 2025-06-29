@@ -295,4 +295,55 @@ export class NotificationsService {
       is_active: data.is_active,
     });
   }
+
+  /**
+   * Crea una notificación automática para un usuario
+   * Evita duplicados verificando si ya existe una notificación similar hoy
+   */
+  async createAutomaticNotification(
+    userId: string,
+    name: string,
+    description: string,
+    type: string
+  ): Promise<void> {
+    try {
+      // Verificar si ya existe una notificación similar hoy para evitar spam
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const existingNotification = await this.prisma.notifications.findFirst({
+        where: {
+          user_id: userId,
+          name: name,
+          created_at: {
+            gte: today,
+            lt: tomorrow,
+          },
+          is_active: true,
+        },
+      });
+
+      if (existingNotification) {
+        console.log(`Notification ${type} already exists for user ${userId} today`);
+        return;
+      }
+
+      // Crear la notificación
+      await this.prisma.notifications.create({
+        data: {
+          user_id: userId,
+          name: name,
+          description: description,
+          was_read: false,
+          is_active: true,
+        },
+      });
+
+      console.log(`Automatic notification created: ${type} for user ${userId}`);
+    } catch (error) {
+      console.error(`Error creating automatic notification for user ${userId}:`, error.message);
+    }
+  }
 }

@@ -5,12 +5,16 @@ import { UpdateDailyConsumptionDto } from './dto/update-daily-consumption.dto';
 import { DailyConsumptionDto } from './dto/daily-consumption.dto';
 import { plainToInstance } from 'class-transformer';
 import { DateService } from '../../common/services/date.service';
+import { SavingsService } from '../savings/savings.service';
+import { AutomaticNotificationsService } from '../notifications/automatic-notifications.service';
 
 @Injectable()
 export class DailyConsumptionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly dateService: DateService,
+    private readonly savingsService: SavingsService,
+    private readonly automaticNotificationsService: AutomaticNotificationsService,
   ) { }
 
   async create(createDailyConsumptionDto: CreateDailyConsumptionDto): Promise<DailyConsumptionDto> {
@@ -79,6 +83,12 @@ export class DailyConsumptionsService {
         is_active: createDailyConsumptionDto.is_active ?? true,
       },
     });
+
+    // Recalcular automáticamente los ahorros para este usuario
+    await this.savingsService.recalculateOrCreateSavings(createDailyConsumptionDto.user_id);
+
+    // Ejecutar verificaciones de notificaciones automáticas
+    await this.automaticNotificationsService.runAllChecksForUser(createDailyConsumptionDto.user_id);
 
     return plainToInstance(DailyConsumptionDto, {
       id: dailyConsumption.id,
@@ -265,6 +275,12 @@ export class DailyConsumptionsService {
       }
     });
 
+    // Recalcular automáticamente los ahorros para este usuario
+    await this.savingsService.recalculateOrCreateSavings(data.user_id);
+
+    // Ejecutar verificaciones de notificaciones automáticas
+    await this.automaticNotificationsService.runAllChecksForUser(data.user_id);
+
     return plainToInstance(DailyConsumptionDto, {
       id: data.id,
       user_id: data.user_id,
@@ -289,6 +305,9 @@ export class DailyConsumptionsService {
       where: { id },
       data: { is_active: true },
     });
+
+    // Recalcular automáticamente los ahorros para este usuario
+    await this.savingsService.recalculateOrCreateSavings(dailyConsumption.user_id);
 
     return plainToInstance(DailyConsumptionDto, {
       id: dailyConsumption.id,
@@ -315,6 +334,9 @@ export class DailyConsumptionsService {
       data: { is_active: false },
     });
 
+    // Recalcular automáticamente los ahorros para este usuario
+    await this.savingsService.recalculateOrCreateSavings(dailyConsumption.user_id);
+
     return {
       ...dailyConsumption,
       date: dailyConsumption.date.toISOString().split('T')[0],
@@ -333,6 +355,9 @@ export class DailyConsumptionsService {
     const data = await this.prisma.daily_consumptions.delete({
       where: { id },
     });
+
+    // Recalcular automáticamente los ahorros para este usuario
+    await this.savingsService.recalculateOrCreateSavings(data.user_id);
 
     return plainToInstance(DailyConsumptionDto, {
       id: data.id,

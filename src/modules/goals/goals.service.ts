@@ -6,12 +6,14 @@ import { GoalDto } from './dto/goal.dto';
 import { plainToInstance } from 'class-transformer';
 import { MonthEnum } from './dto/month.enum';
 import { DateService } from '../../common/services/date.service';
+import { AutomaticNotificationsService } from '../notifications/automatic-notifications.service';
 
 @Injectable()
 export class GoalsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly dateService: DateService,
+    private readonly automaticNotificationsService: AutomaticNotificationsService,
   ) { }
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
@@ -61,6 +63,13 @@ export class GoalsService {
         is_active: createGoalDto.is_active ?? true,
       },
     });
+
+    // Ejecutar verificaciones automáticas de notificaciones después de crear una meta
+    try {
+      await this.automaticNotificationsService.runAllChecksForUser(createGoalDto.user_id);
+    } catch (error) {
+      console.error(`Error running automatic notifications for user ${createGoalDto.user_id}:`, error.message);
+    }
 
     return plainToInstance(GoalDto, {
       id: goal.id,
@@ -211,6 +220,13 @@ export class GoalsService {
         estimated_cost,
       },
     });
+
+    // Ejecutar verificaciones automáticas de notificaciones después de actualizar una meta
+    try {
+      await this.automaticNotificationsService.runAllChecksForUser(existingGoal.user_id);
+    } catch (error) {
+      console.error(`Error running automatic notifications for user ${existingGoal.user_id}:`, error.message);
+    }
 
     return plainToInstance(GoalDto, {
       id: goal.id,

@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from '../common/common.module';
+import { TasksModule } from '../common/tasks.module';
 import configuration from '../common/config/configuration';
 import { UsersModule } from '../modules/users/users.module';
 import { DistrictsModule } from '../modules/districts/districts.module';
@@ -25,6 +26,7 @@ import { ChatbotModule } from 'src/modules/chatbot/chatbot.module';
       isGlobal: true,
     }),
     CommonModule,
+    TasksModule,
     UsersModule,
     DistrictsModule,
     DevicesModule,
