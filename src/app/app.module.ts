@@ -16,6 +16,7 @@ import { GoalsModule } from '../modules/goals/goals.module';
 import { DailyConsumptionsModule } from '../modules/daily-consumptions/daily-consumptions.module';
 import { SavingsModule } from '../modules/savings/savings.module';
 import { MonthlyConsumptionsModule } from '../modules/monthly-consumptions/monthly-consumptions.module';
+import { ChatbotModule } from 'src/modules/chatbot/chatbot.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { MonthlyConsumptionsModule } from '../modules/monthly-consumptions/month
     GoalsModule,
     DailyConsumptionsModule,
     SavingsModule,
-    MonthlyConsumptionsModule
+    MonthlyConsumptionsModule,
+    ChatbotModule,
   ],
   controllers: [AppController],
   providers: [AppService],
