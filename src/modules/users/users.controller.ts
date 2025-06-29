@@ -3,7 +3,10 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DesactivateUserDto, ActivateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UserBaseDto } from './dto';
+import { UserBaseDto} from './dto';
+import { CreateResetPasswordDto } from './dto/create-reset-password.dto';
+import { VerifyResetCodeDto } from './dto/verify-reset-code.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Controller('users')
@@ -92,8 +95,37 @@ export class UsersController {
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 200, description: 'User authenticated', type: UserBaseDto })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @HttpCode(200) 
+  @HttpCode(200)
   login(@Body() user: LoginDto) {
     return this.usersService.login(user.email, user.password);
   }
+
+  @Post('/create-reset-password')
+  @ApiOperation({ summary: 'Create a reset password code' })
+  @ApiBody({ type: CreateResetPasswordDto })
+  @ApiResponse({ status: 200, description: 'Reset password code created successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  createCodeResetPassword(@Body() createResetPasswordDto: CreateResetPasswordDto) {
+    return this.usersService.createCodeResetPassword(createResetPasswordDto.email);
+  }
+
+  @Post('/verify-reset-code')
+  @ApiOperation({ summary: 'Verify reset password code' })
+  @ApiBody({ type: VerifyResetCodeDto })
+  @ApiResponse({ status: 200, description: 'Reset code verified successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 400, description: 'Invalid reset code' })
+  verifyResetCode(@Body() verifyResetCodeDto: VerifyResetCodeDto) {
+    return this.usersService.verifyResetCode(verifyResetCodeDto.email, verifyResetCodeDto.code);
+  }
+
+  @Post('/reset-password')
+  @ApiOperation({ summary: 'Reset user password' })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({ status: 200, description: 'Password reset successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.usersService.resetPassword(resetPasswordDto.email, resetPasswordDto.newPassword);
+  }
+
 }

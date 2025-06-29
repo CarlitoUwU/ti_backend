@@ -25,7 +25,7 @@ export class UserBaseDto {
   username!: string;
 
   @IsNotEmpty()
-  @ApiProperty({type: DistrictBaseDto, description: 'District info'})
+  @ApiProperty({ type: DistrictBaseDto, description: 'District info' })
   district!: DistrictBaseDto;
 
   @IsNotEmpty()

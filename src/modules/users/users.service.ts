@@ -6,6 +6,7 @@ import { UserBaseDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { parse } from 'path';
 import { DateService } from '../../common/services/date.service';
+import { MailsService } from '../mails/mails.service';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,7 @@ export class UsersService {
     private readonly prismaService: PrismaService,
     private readonly userProfilesService: UserProfilesService,
     private readonly dateService: DateService,
+    private readonly mailsService: MailsService,
   ) { }
 
   async create(createUserDto: CreateUserDto) {
@@ -201,6 +203,75 @@ export class UsersService {
         is_active: data.districts.is_active,
       },
     };
-
   }
+
+  async createCodeResetPassword(email: string) {
+    const user = await this.prismaService.users.findUnique({
+      where: { email },
+      select: {
+        username: true,
+      }
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email '${email}' not found`);
+    }
+
+    const resetCode = 111111
+    await this.mailsService.sendUserResetPassword(user.username, email, resetCode);
+
+    return {
+      message: 'Reset password email sent successfully'
+    };
+  }
+
+  async verifyResetCode(email: string, code: number) {
+    const user = await this.prismaService.users.findUnique({
+      where: { email },
+      select: {
+        username: true,
+      }
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email '${email}' not found`);
+    }
+
+    // For testing purposes, you might want to remove this in production
+    if (code !== 111111) {
+      throw new NotFoundException('Invalid reset code');
+    }
+
+    return {
+      message: 'Reset code verified successfully'
+    };
+  }
+
+  async resetPassword(email: string, newPassword: string) {
+    const user = await this.prismaService.users.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email '${email}' not found`);
+    }
+
+    const salt = parseInt(process.env.BCRYPT_SALT || '10', 10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    const updatedUser = await this.prismaService.users.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+        updated_at: this.dateService.getCurrentPeruDate(),
+      },
+      include: {
+        user_profiles: true,
+        districts: true,
+      },
+    });
+
+    return this.toUserDto(updatedUser);
+  }
+
 }
