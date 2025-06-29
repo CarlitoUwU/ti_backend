@@ -131,7 +131,7 @@ src/
 
 ### **Clonar el Repositorio**
 ```bash
-git clone <repository-url>
+git clone https://github.com/CarlitoUwU/ti_backend
 cd ti_backend
 ```
 
