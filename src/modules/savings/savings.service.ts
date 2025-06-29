@@ -361,4 +361,87 @@ export class SavingsService {
       is_active: data.is_active,
     });
   }
+
+  /**
+   * Recalcula los ahorros de manera segura para un usuario, creando el registro si no existe
+   * Este método se llama automáticamente cuando hay cambios en los consumos diarios
+   */
+  async recalculateOrCreateSavings(userId: string): Promise<void> {
+    try {
+      // Verificar que el usuario existe y obtener información del distrito
+      const user = await this.usersService.findOne(userId);
+
+      if (!user.district) {
+        console.warn(`District not found for user with ID ${userId}. Cannot calculate savings.`);
+        return;
+      }
+
+      // Obtener mes y año actual
+      const currentDate = this.dateService.getCurrentPeruDate();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1;
+      const month = this.getNumberMonth(currentMonth);
+
+      // Verificar si existe una meta activa para este usuario, mes y año
+      const goal = await this.prisma.goals.findFirst({
+        where: {
+          user_id: userId,
+          month: month,
+          year: currentYear,
+          is_active: true,
+        },
+      });
+
+      if (!goal) {
+        console.warn(`No active goal found for user ${userId}, month ${month}, and year ${currentYear}. Cannot calculate savings.`);
+        return;
+      }
+
+      // Buscar si ya existe un registro de ahorros para este usuario, mes y año
+      const existingSaving = await this.prisma.savings.findFirst({
+        where: {
+          user_id: userId,
+          month: month,
+          year: currentYear,
+        },
+      });
+
+      // Calcular ahorros
+      const { savings_kwh, savings_sol } = await this.calculateSavings(
+        userId,
+        month,
+        currentYear,
+        user.district.fee_kwh
+      );
+
+      if (existingSaving) {
+        // Actualizar registro existente
+        await this.prisma.savings.update({
+          where: { id: existingSaving.id },
+          data: {
+            savings_kwh,
+            savings_sol,
+            is_active: true, // Asegurar que esté activo
+          },
+        });
+        console.log(`Savings updated for user ${userId} for ${month} ${currentYear}`);
+      } else {
+        // Crear nuevo registro
+        await this.prisma.savings.create({
+          data: {
+            user_id: userId,
+            month: month,
+            year: currentYear,
+            savings_kwh,
+            savings_sol,
+            is_active: true,
+          },
+        });
+        console.log(`Savings created for user ${userId} for ${month} ${currentYear}`);
+      }
+    } catch (error) {
+      // Solo loguear el error para no interrumpir el flujo principal
+      console.warn(`Could not recalculate savings for user ${userId}:`, error.message);
+    }
+  }
 }
