@@ -3,7 +3,6 @@ import { CreateDeviceDto } from './dto/create-device.dto';
 import { PrismaService } from 'src/prisma.service';
 import { DeviceBaseDto } from './dto';
 import { plainToInstance } from 'class-transformer';
-import { url } from 'inspector';
 
 @Injectable()
 export class DevicesService {
@@ -33,6 +32,35 @@ export class DevicesService {
     };
 
     return plainToInstance(DeviceBaseDto, device);
+  }
+
+  async createArray(createDeviceDtos: CreateDeviceDto[]): Promise<DeviceBaseDto[]> {
+    const devices: DeviceBaseDto[] = [];
+    for (const dto of createDeviceDtos) {
+      const data = await this.prisma.devices.create({
+        data: {
+          name: dto.name,
+          consumption_kwh_h: dto.consumption_kwh_h,
+          url: dto.url,
+          is_active: dto.is_active ?? true,
+        },
+        select: {
+          id: true,
+          name: true,
+          consumption_kwh_h: true,
+          url: true,
+          is_active: true,
+        },
+      });
+      devices.push({
+        id: data.id,
+        name: data.name,
+        consumption_kwh_h: data.consumption_kwh_h,
+        url: data.url,
+        is_active: data.is_active,
+      });
+    }
+    return plainToInstance(DeviceBaseDto, devices);
   }
 
   async findAll() {

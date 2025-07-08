@@ -21,6 +21,17 @@ export class DevicesController {
     return this.devicesService.create(createDeviceDto);
   }
 
+  @Post('array')
+  @ApiOperation({ summary: 'Create multiple devices' })
+  @ApiResponse({
+    status: 201,
+    description: 'The devices have been successfully created.',
+    type: [DeviceBaseDto],
+  })
+  createArray(@Body() createDeviceDtos: CreateDeviceDto[]) {
+    return this.devicesService.createArray(createDeviceDtos);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Retrieve all devices' })
   @ApiResponse({
