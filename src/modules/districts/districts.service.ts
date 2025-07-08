@@ -31,6 +31,32 @@ export class DistrictsService {
     return plainToInstance(DistrictBaseDto, district);
   }
 
+  async createArray(createDistrictDtos: CreateDistrictDto[]): Promise<DistrictBaseDto[]> {
+    const districts: DistrictBaseDto[] = [];
+    for (const dto of createDistrictDtos) {
+      const data = await this.prisma.districts.create({
+        data: {
+          name: dto.name,
+          fee_kwh: dto.fee_kwh,
+          is_active: dto.is_active ?? true,
+        },
+        select: {
+          id: true,
+          name: true,
+          fee_kwh: true,
+          is_active: true,
+        },
+      });
+      districts.push({
+        id: data.id,
+        name: data.name,
+        fee_kwh: data.fee_kwh,
+        is_active: data.is_active,
+      });
+    }
+    return plainToInstance(DistrictBaseDto, districts);
+  }
+
   async findAll() {
     const data = await this.prisma.districts.findMany({
       select: {

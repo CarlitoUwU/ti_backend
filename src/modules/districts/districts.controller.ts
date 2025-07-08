@@ -21,6 +21,17 @@ export class DistrictsController {
     return this.districtsService.create(createDistrictDto);
   }
 
+  @Post('array')
+  @ApiOperation({ summary: 'Create multiple districts' })
+  @ApiResponse({
+    status: 201,
+    description: 'The districts have been successfully created.',
+    type: [DistrictBaseDto],
+  })
+  createArray(@Body() createDistrictDtos: CreateDistrictDto[]) {
+    return this.districtsService.createArray(createDistrictDtos);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Retrieve all districts' })
   @ApiResponse({
