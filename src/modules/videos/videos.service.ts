@@ -34,6 +34,28 @@ export class VideosService {
     return plainToInstance(VideoBaseDto, video);
   }
 
+  async createArray(createVideoDtos: CreateVideoDto[]): Promise<VideoBaseDto[]> {
+    const data = await this.prisma.videos.createMany({
+      data: createVideoDtos.map((dto) => ({
+        title: dto.title,
+        url: dto.url,
+        duration_seg: dto.duration_seg,
+        is_active: dto.is_active ?? true,
+      })),
+      skipDuplicates: true,
+    });
+    if (data.count === 0) {
+      return [];
+    }
+    const videos = createVideoDtos.map((dto) => ({
+      title: dto.title,
+      url: dto.url,
+      duration_seg: dto.duration_seg,
+      is_active: dto.is_active ?? true,
+    }));
+    return plainToInstance(VideoBaseDto, videos);
+  }
+
   async findAll() {
     const data = await this.prisma.videos.findMany({
       select: {

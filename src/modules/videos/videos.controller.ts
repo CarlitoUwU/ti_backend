@@ -21,6 +21,18 @@ export class VideosController {
     return this.videosService.create(createVideoDto);
   }
 
+  @Post('array')
+  @ApiOperation({ summary: 'Create multiple videos' })
+  @ApiResponse({
+    status: 201,
+    description: 'The videos have been successfully created.',
+    type: [VideoBaseDto],
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  createArray(@Body() createVideoDtos: CreateVideoDto[]) {
+    return this.videosService.createArray(createVideoDtos);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Retrieve all videos' })
   @ApiResponse({
