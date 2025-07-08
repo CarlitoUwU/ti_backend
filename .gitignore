@@ -4,6 +4,7 @@
 /build
 
 /postgres
+/ollama_data
 
 # Logs
 logs

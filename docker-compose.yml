@@ -13,6 +13,20 @@ services:
     volumes:
       - ./postgres:/var/lib/postgresql/data
 
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    runtime: nvidia
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama_data:/root/.ollama
+      - ./start-ollama.sh:/start-ollama.sh
+    command: ["serve"]
+
+
   # Redis Cache
   redis:
     image: redis
