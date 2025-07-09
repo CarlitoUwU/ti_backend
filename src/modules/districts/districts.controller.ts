@@ -1,7 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  Put,
+} from '@nestjs/common';
 import { DistrictsService } from './districts.service';
 import { CreateDistrictDto } from './dto/create-district.dto';
-import { ActivateDistrictDto, DesactivateDistrictDto } from './dto/update-district.dto';
+import {
+  ActivateDistrictDto,
+  DesactivateDistrictDto,
+  UpdateDistrictDto,
+} from './dto/update-district.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { DistrictBaseDto } from './dto';
 
@@ -55,6 +69,19 @@ export class DistrictsController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.districtsService.findOne(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update a district' })
+  @ApiResponse({
+    status: 200,
+    description: 'The district has been successfully updated.',
+    type: DistrictBaseDto,
+  })
+  @ApiResponse({ status: 404, description: 'District not found' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateDistrictDto: UpdateDistrictDto) {
+    return this.districtsService.update(id, updateDistrictDto);
   }
 
   @Patch(':id/activate')

@@ -3,6 +3,7 @@ import { CreateDistrictDto } from './dto/create-district.dto';
 import { PrismaService } from 'src/prisma.service';
 import { DistrictBaseDto } from './dto';
 import { plainToInstance } from 'class-transformer';
+import { UpdateDistrictDto } from './dto/update-district.dto';
 
 @Injectable()
 export class DistrictsService {
@@ -80,6 +81,39 @@ export class DistrictsService {
   async findOne(id: number) {
     const data = await this.prisma.districts.findUnique({
       where: { id },
+      select: {
+        id: true,
+        name: true,
+        fee_kwh: true,
+        is_active: true,
+      },
+    });
+
+    if (!data) {
+      throw new Error(`District with ID ${id} not found`);
+    }
+
+    return plainToInstance(DistrictBaseDto, {
+      id: data.id,
+      name: data.name,
+      fee_kwh: data.fee_kwh,
+      is_active: data.is_active,
+    });
+  }
+
+  async update(id: number, updateDistrictDto: UpdateDistrictDto) {
+    const existing = await this.findOne(id);
+
+    if (!existing) {
+      throw new Error(`District with ID ${id} not found`);
+    }
+
+    const data = await this.prisma.districts.update({
+      where: { id },
+      data: {
+        name: updateDistrictDto.name ?? existing.name,
+        fee_kwh: updateDistrictDto.fee_kwh ?? existing.fee_kwh,
+      },
       select: {
         id: true,
         name: true,
