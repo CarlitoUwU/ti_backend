@@ -84,12 +84,12 @@ export class UsersVideosService {
         user_id: createUserVideoDto.user_id,
         melda_id: this.id_medal_bronce,
       });
-    } else if (count === 10) {
+    } else if (count === 5) {
       await this.usersMedalsService.create({
         user_id: createUserVideoDto.user_id,
         melda_id: this.id_medal_plata,
       });
-    } else if (count === 25) {
+    } else if (count === 10) {
       await this.usersMedalsService.create({
         user_id: createUserVideoDto.user_id,
         melda_id: this.id_medal_oro,
